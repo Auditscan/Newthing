@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TitanSend</title>
+<style>
+  :root {
+    --purple: #6728d9;
+    --pink: #d52ca8;
+    --ink: #26243e;
+    --muted: #77758a;
+    --line: #e5e2ef;
+    --bg: #f5f1ff;
+    --orange: #f97316;
+    --blue: #2563eb;
+    --green: #1a9e5c;
+    --red: #dc2626;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    font: 16px/1.5 system-ui, -apple-system, Segoe UI, sans-serif;
+    color: var(--ink);
+  }
+  header {
+    height: 80px;
+    background: #25205f;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+  }
+  .logo {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    margin-right: 12px;
+    position: relative;
+  }
+  .logo::after {
+    content: '';
+    position: absolute;
+    left: 3px; right: 3px; top: 3px;
+    height: 1px; background: #fff;
+  }
+  main {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 0 15px;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  }
+  h2 { font-size: 20px; margin-bottom: 15px; }
+  label { display: block; font-weight: 600; margin: 15px 0 5px; }
+  input, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d8d5e6;
+    border-radius: 8px;
+    font: inherit;
+  }
+  textarea { min-height: 130px; resize: vertical; }
+  .btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(110deg, var(--purple), var(--pink));
+    color: #fff;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .btn.reset {
+    background: #fff;
+    border: 1px solid var(--red);
+    color: var(--red);
+  }
+  .btn.reset:hover {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .analytics {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .analytics-number {
+    font-size: 42px;
+    font-weight: 800;
+    background: linear-gradient(110deg, var(--purple), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+  .analytics-label {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .analytics-label strong {
+    display: block;
+    color: var(--ink);
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  details {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    overflow: hidden;
+  }
+  summary {
+    padding: 20px 25px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 700;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    transition: background 0.15s ease;
+  }
+  summary:hover { background: #faf8ff; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '▾';
+    font-size: 18px;
+    color: var(--muted);
+    transition: transform 0.2s ease;
+  }
+  details[open] summary::after { transform: rotate(180deg); }
+  .summary-count {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 16px;
+  }
+  .dropdown-body {
+    padding: 0 25px 20px 25px;
+    border-top: 1px solid var(--line);
+  }
+
+  .list { margin-top: 10px; }
+  .item {
+    padding: 10px 8px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .item:last-child { border-bottom: none; }
+
+  .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    background: #eee;
+    color: var(--muted);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .num.done {
+    background: var(--orange);
+    color: #fff;
+  }
+
+  /* Smaller email text */
+  .email-link {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--blue);
+    text-decoration: none;
+    cursor: pointer;
+    border-bottom: 1px dashed var(--blue);
+    word-break: break-all;
+  }
+  .email-link:hover {
+    color: var(--purple);
+    border-bottom-color: var(--purple);
+  }
+  .email-link.sent {
+    color: var(--orange);
+    border-bottom: none;
+    cursor: default;
+    text-decoration: line-through;
+  }
+
+  .status { font-size: 13px; color: var(--muted); margin-top: 5px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"></div>
+  <h1>TitanSend</h1>
+</header>
+
+<main>
+  <!-- Analytics -->
+  <div class="card">
+    <h2>Analytics</h2>
+    <div class="analytics">
+      <div class="analytics-number" id="analyticsCount">0</div>
+      <div class="analytics-label">
+        <strong>Emails sent in the last 24 hours</strong>
+        <span>Resets automatically after 24 hours.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Add Emails -->
+  <div class="card">
+    <h2>1. Add Recipients</h2>
+    <label>Paste your list of emails below</label>
+    <textarea id="bulkEmails" placeholder="email1@example.com&#10;email2@example.com&#10;email3@example.com"></textarea>
+    <p class="status">Separate emails with commas, spaces, or new lines.</p>
+    <button class="btn" id="addBtn">Generate List</button>
+    <div class="status" id="addStatus"></div>
+  </div>
+
+  <!-- Compose Section -->
+  <div class="card">
+    <h2>2. Compose Email</h2>
+    <label>Subject</label>
+    <input type="text" id="subject" placeholder="Enter email subject">
+    
+    <label>Message</label>
+    <textarea id="body" placeholder="Write your email here..."></textarea>
+  </div>
+
+  <!-- Pending Dropdown -->
+  <details id="pendingDetails">
+    <summary>
+      <span>3. Pending <span class="summary-count" id="pendingCount">(0)</span></span>
+    </summary>
+    <div class="dropdown-body">
+      <div class="list" id="pendingList"></div>
+      <p class="status" id="pendingStatus">No emails added yet.</p>
+    </div>
+  </details>
+
+  <!-- All Recipients Dropdown -->
+  <details id="allDetails">
+    <summary>
+      <span>4. All Recipients <span class="summary-count" id="allCount">(0)</span></span>
+    </summary>
+    <div class="dropdown-body">
+      <div class="list" id="allList"></div>
+      <p class="status" id="allStatus">No emails added yet.</p>
+    </div>
+  </details>
+
+  <!-- Reset -->
+  <div class="card">
+    <h2>Reset</h2>
+    <p class="status">This will clear all recipients and reset the analytics. Cannot be undone.</p>
+    <button class="btn reset" id="resetBtn">Reset Everything</button>
+  </div>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  // Safe storage
+  const store = {
+    get(key, fallback) {
+      try {
+        const v = localStorage.getItem(key);
+        return v ? JSON.parse(v) : fallback;
+      } catch (e) { return fallback; }
+    },
+    set(key, val) {
+      try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+    },
+    remove(key) {
+      try { localStorage.removeItem(key); } catch (e) {}
+    },
+    getRaw(key, fallback) {
+      try { return localStorage.getItem(key) || fallback; } catch (e) { return fallback; }
+    },
+    setRaw(key, val) {
+      try { localStorage.setItem(key, val); } catch (e) {}
+    }
+  };
+
+  // State
+  let recipients = store.get('titansend_recipients', []);
+  let sentLog = store.get('titansend_sentLog', []);
+  $('subject').value = store.getRaw('titansend_subject', '');
+  $('body').value = store.getRaw('titansend_body', '');
+
+  // Keep the textarea in sync with saved emails (restore on reload)
+  $('bulkEmails').value = store.getRaw('titansend_bulkText', '');
+
+  $('subject').addEventListener('input', () => {
+    store.setRaw('titansend_subject', $('subject').value);
+  });
+  $('body').addEventListener('input', () => {
+    store.setRaw('titansend_body', $('body').value);
+  });
+  $('bulkEmails').addEventListener('input', () => {
+    store.setRaw('titansend_bulkText', $('bulkEmails').value);
+  });
+
+  function pruneSentLog() {
+    const cutoff = Date.now() - (24 * 60 * 60 * 1000);
+    sentLog = sentLog.filter(ts => ts > cutoff);
+    store.set('titansend_sentLog', sentLog);
+  }
+
+  function extractEmails(text) {
+    const regex = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
+    return text.match(regex) || [];
+  }
+
+  // 1. Generate List — textarea stays untouched
+  $('addBtn').onclick = () => {
+    const rawText = $('bulkEmails').value;
+    const foundEmails = extractEmails(rawText);
+
+    if (foundEmails.length === 0) {
+      $('addStatus').textContent = 'No valid emails found. Please check your list.';
+      return;
+    }
+
+    let addedCount = 0;
+    foundEmails.forEach(email => {
+      const exists = recipients.some(r => r.email === email);
+      if (!exists) {
+        recipients.push({ email: email, sent: false });
+        addedCount++;
+      }
+    });
+
+    // ❌ DO NOT clear $('bulkEmails').value — keep emails in the box
+    $('addStatus').textContent = `Added ${addedCount} new email(s).`;
+    store.set('titansend_recipients', recipients);
+    render();
+  };
+
+  // 2. Render
+  function render() {
+    pruneSentLog();
+    $('analyticsCount').textContent = sentLog.length;
+
+    // PENDING
+    const pendingList = $('pendingList');
+    pendingList.innerHTML = '';
+    const pendingItems = recipients.filter(r => !r.sent);
+    $('pendingCount').textContent = `(${pendingItems.length})`;
+
+    if (pendingItems.length === 0) {
+      $('pendingStatus').style.display = 'block';
+      $('pendingStatus').textContent = recipients.length === 0
+        ? 'No emails added yet.'
+        : '🎉 All emails have been sent!';
+    } else {
+      $('pendingStatus').style.display = 'none';
+      pendingItems.forEach(item => {
+        const realIndex = recipients.indexOf(item);
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <span class="num">${realIndex + 1}</span>
+          <a class="email-link" onclick="sendOne(${realIndex})" title="Click to send">${item.email}</a>
+        `;
+        pendingList.appendChild(div);
+      });
+    }
+
+    // ALL
+    const allList = $('allList');
+    allList.innerHTML = '';
+    $('allCount').textContent = `(${recipients.length})`;
+
+    if (recipients.length === 0) {
+      $('allStatus').style.display = 'block';
+    } else {
+      $('allStatus').style.display = 'none';
+      recipients.forEach((item, index) => {
+        const linkClass = item.sent ? 'email-link sent' : 'email-link';
+        const numClass = item.sent ? 'num done' : 'num';
+        const title = item.sent ? 'Already sent' : 'Click to send';
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <span class="${numClass}">${index + 1}</span>
+          <a class="${linkClass}" onclick="sendOne(${index})" title="${title}">${item.email}</a>
+        `;
+        allList.appendChild(div);
+      });
+    }
+  }
+
+  // 3. Send
+  window.sendOne = (index) => {
+    const item = recipients[index];
+    if (item.sent) return;
+
+    const subject = $('subject').value.trim();
+    const body = $('body').value.trim();
+
+    if (!subject || !body) {
+      alert("Please write a Subject and Message before sending.");
+      return;
+    }
+
+    const mailtoLink = `mailto:${item.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+
+    item.sent = true;
+    sentLog.push(Date.now());
+    store.set('titansend_sentLog', sentLog);
+    store.set('titansend_recipients', recipients);
+    render();
+  };
+
+  // 4. Reset
+  $('resetBtn').onclick = () => {
+    if (!confirm("Are you sure? This will delete all emails and reset the analytics. Cannot be undone.")) return;
+    recipients = [];
+    sentLog = [];
+    store.remove('titansend_recipients');
+    store.remove('titansend_sentLog');
+    store.remove('titansend_subject');
+    store.remove('titansend_body');
+    store.remove('titansend_bulkText');
+    $('subject').value = '';
+    $('body').value = '';
+    $('bulkEmails').value = '';
+    $('addStatus').textContent = 'Reset complete.';
+    render();
+  };
+
+  setInterval(render, 60 * 1000);
+  render();
+</script>
+</body>
+</html>
