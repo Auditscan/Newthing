@@ -6,15 +6,16 @@
 <title>SwiftSend</title>
 <style>
   :root {
-    --purple: #6728d9;
-    --pink: #d52ca8;
+    --green-dark: #166534;
+    --green: #16a34a;
+    --green-light: #22c55e;
+    --green-soft: #dcfce7;
     --ink: #26243e;
     --muted: #77758a;
     --line: #e5e2ef;
-    --bg: #f5f1ff;
+    --bg: #f0fdf4;
     --orange: #f97316;
     --blue: #2563eb;
-    --green: #1a9e5c;
     --red: #dc2626;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,7 +27,7 @@
   }
   header {
     height: 80px;
-    background: #25205f;
+    background: var(--green-dark);
     color: #fff;
     display: flex;
     align-items: center;
@@ -57,7 +58,7 @@
     border-radius: 16px;
     padding: 25px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(22, 101, 52, 0.05);
   }
   h2 { font-size: 20px; margin-bottom: 15px; }
   label { display: block; font-weight: 600; margin: 15px 0 5px; }
@@ -67,6 +68,12 @@
     border: 1px solid #d8d5e6;
     border-radius: 8px;
     font: inherit;
+    background: #fff;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-soft);
   }
   textarea { min-height: 130px; resize: vertical; }
   .btn {
@@ -76,10 +83,13 @@
     font: inherit;
     font-weight: 600;
     cursor: pointer;
-    background: linear-gradient(110deg, var(--purple), var(--pink));
+    background: linear-gradient(110deg, var(--green), var(--green-light));
     color: #fff;
     width: 100%;
     margin-top: 10px;
+  }
+  .btn:hover {
+    background: linear-gradient(110deg, var(--green-dark), var(--green));
   }
   .btn.reset {
     background: #fff;
@@ -99,7 +109,7 @@
   .analytics-number {
     font-size: 42px;
     font-weight: 800;
-    background: linear-gradient(110deg, var(--purple), var(--pink));
+    background: linear-gradient(110deg, var(--green-dark), var(--green-light));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -121,7 +131,7 @@
     border: 1px solid var(--line);
     border-radius: 16px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(22, 101, 52, 0.05);
     overflow: hidden;
   }
   summary {
@@ -136,7 +146,7 @@
     user-select: none;
     transition: background 0.15s ease;
   }
-  summary:hover { background: #faf8ff; }
+  summary:hover { background: var(--green-soft); }
   summary::-webkit-details-marker { display: none; }
   summary::after {
     content: '▾';
@@ -153,6 +163,9 @@
   .dropdown-body {
     padding: 0 25px 20px 25px;
     border-top: 1px solid var(--line);
+  }
+  .dropdown-body > label:first-child {
+    margin-top: 15px;
   }
 
   .list { margin-top: 10px; }
@@ -193,19 +206,18 @@
     word-break: break-all;
   }
   .email-link:hover {
-    color: var(--purple);
-    border-bottom-color: var(--purple);
+    color: var(--green-dark);
+    border-bottom-color: var(--green-dark);
   }
 
-  /* Sent style: orange, but still clickable */
   .email-link.sent {
     color: var(--orange);
     border-bottom: 1px dashed var(--orange);
     text-decoration: line-through;
   }
   .email-link.sent:hover {
-    color: var(--purple);
-    border-bottom-color: var(--purple);
+    color: var(--green-dark);
+    border-bottom-color: var(--green-dark);
     text-decoration: none;
   }
 
@@ -242,20 +254,37 @@
     <div class="status" id="addStatus"></div>
   </div>
 
-  <!-- Compose Section -->
-  <div class="card">
-    <h2>2. Compose Email</h2>
-    <label>Subject</label>
-    <input type="text" id="subject" placeholder="Enter email subject">
-    
-    <label>Message</label>
-    <textarea id="body" placeholder="Write your email here..."></textarea>
-  </div>
+  <!-- Compose Email Dropdown -->
+  <details id="composeDetails">
+    <summary>
+      <span>2. Compose Email</span>
+    </summary>
+    <div class="dropdown-body">
+      <label>Subject</label>
+      <input type="text" id="subject" placeholder="Enter email subject">
+      
+      <label>Message</label>
+      <textarea id="body" placeholder="Write your email here..."></textarea>
+    </div>
+  </details>
+
+  <!-- Test Email Dropdown -->
+  <details>
+    <summary>
+      <span>3. Test Email (Optional)</span>
+    </summary>
+    <div class="dropdown-body">
+      <label>Send a test to yourself first</label>
+      <input type="email" id="testEmail" placeholder="your-test@example.com">
+      <button class="btn" id="testBtn">Send Test Email</button>
+      <div class="status" id="testStatus"></div>
+    </div>
+  </details>
 
   <!-- Pending Dropdown -->
   <details id="pendingDetails">
     <summary>
-      <span>3. Pending <span class="summary-count" id="pendingCount">(0)</span></span>
+      <span>4. Pending <span class="summary-count" id="pendingCount">(0)</span></span>
     </summary>
     <div class="dropdown-body">
       <div class="list" id="pendingList"></div>
@@ -266,7 +295,7 @@
   <!-- All Recipients Dropdown -->
   <details id="allDetails">
     <summary>
-      <span>4. All Recipients <span class="summary-count" id="allCount">(0)</span></span>
+      <span>5. All Recipients <span class="summary-count" id="allCount">(0)</span></span>
     </summary>
     <div class="dropdown-body">
       <div class="list" id="allList"></div>
@@ -421,14 +450,13 @@
     const body = $('body').value.trim();
 
     if (!subject || !body) {
-      alert("Please write a Subject and Message before sending.");
+      alert("Please write a Subject and Message first. Open '2. Compose Email' to write them.");
       return;
     }
 
     const mailtoLink = `mailto:${item.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailtoLink;
 
-    // Only update state if it wasn't already sent
     if (!item.sent) {
       item.sent = true;
       sentLog.push(Date.now());
@@ -438,7 +466,28 @@
     }
   };
 
-  // 4. Reset
+  // 4. Send Test Email
+  $('testBtn').onclick = () => {
+    const testEmail = $('testEmail').value.trim();
+    if (!testEmail || !testEmail.includes('@')) {
+      $('testStatus').textContent = 'Please enter a valid test email address.';
+      return;
+    }
+
+    const subject = $('subject').value.trim();
+    const body = $('body').value.trim();
+
+    if (!subject || !body) {
+      $('testStatus').textContent = 'Please write a Subject and Message first.';
+      return;
+    }
+
+    const mailtoLink = `mailto:${testEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+    $('testStatus').textContent = 'Test email opened in your mail app.';
+  };
+
+  // 5. Reset
   $('resetBtn').onclick = () => {
     if (!confirm("Are you sure? This will delete all emails and reset the analytics. Cannot be undone.")) return;
     recipients = [];
@@ -451,7 +500,9 @@
     $('subject').value = '';
     $('body').value = '';
     $('bulkEmails').value = '';
-    $('addStatus').textContent = 'Reset complete.';
+    $('testEmail').value = '';
+    $('addStatus').textContent = '';
+    $('testStatus').textContent = '';
     render();
   };
 
