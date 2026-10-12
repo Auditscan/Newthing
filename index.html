@@ -1,5 +1,816 @@
-Durhhhh
-Durhhhh
-Durhhhh
-Durhhhh
-New site at swiftsend.fluxatech.space
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwiftExtract</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
+<style>
+  :root {
+    --green-dark: #166534;
+    --green: #16a34a;
+    --green-light: #22c55e;
+    --green-soft: #dcfce7;
+    --ink: #26243e;
+    --muted: #77758a;
+    --line: #e5e2ef;
+    --bg: #f0fdf4;
+    --blue: #2563eb;
+    --red: #dc2626;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    font: 16px/1.5 system-ui, -apple-system, Segoe UI, sans-serif;
+    color: var(--ink);
+  }
+  header {
+    height: 80px;
+    background: var(--green-dark);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+  }
+  .logo {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    margin-right: 12px;
+    position: relative;
+  }
+  .logo::after {
+    content: '';
+    position: absolute;
+    left: 3px; right: 3px; top: 3px;
+    height: 1px; background: #fff;
+  }
+  main {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 0 15px;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(22, 101, 52, 0.05);
+  }
+  h2 { font-size: 20px; margin-bottom: 15px; }
+  h3 { font-size: 16px; margin-bottom: 10px; color: var(--green-dark); }
+  label { display: block; font-weight: 600; margin: 15px 0 5px; }
+  input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d8d5e6;
+    border-radius: 8px;
+    font: inherit;
+    background: #fff;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-soft);
+  }
+  textarea { min-height: 130px; resize: vertical; }
+  .btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(110deg, var(--green), var(--green-light));
+    color: #fff;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .btn:hover {
+    background: linear-gradient(110deg, var(--green-dark), var(--green));
+  }
+  .btn.secondary {
+    background: #fff;
+    border: 1px solid #d8d5e6;
+    color: var(--ink);
+  }
+  .btn.secondary:hover {
+    background: var(--green-soft);
+    border-color: var(--green);
+    color: var(--green-dark);
+  }
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn-row .btn { flex: 1; min-width: 120px; }
+
+  .dropzone {
+    border: 2px dashed #c8e6c9;
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    background: #fafffb;
+    transition: all 0.15s ease;
+  }
+  .dropzone:hover, .dropzone.dragover {
+    border-color: var(--green);
+    background: var(--green-soft);
+  }
+  .dropzone-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .dropzone-text {
+    font-weight: 600;
+    color: var(--green-dark);
+  }
+  .dropzone-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .file-list { margin-top: 10px; }
+  .file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: var(--green-soft);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .file-item .name {
+    font-weight: 600;
+    color: var(--green-dark);
+    word-break: break-all;
+  }
+  .file-item .size {
+    color: var(--muted);
+    font-size: 12px;
+    margin-left: 10px;
+    flex-shrink: 0;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-weight: 400;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .options input[type="checkbox"] {
+    width: auto;
+    accent-color: var(--green);
+    cursor: pointer;
+  }
+  .option-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 26px;
+  }
+
+  details {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(22, 101, 52, 0.05);
+    overflow: hidden;
+  }
+  summary {
+    padding: 20px 25px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 700;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    transition: background 0.15s ease;
+  }
+  summary:hover { background: var(--green-soft); }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '▾';
+    font-size: 18px;
+    color: var(--muted);
+    transition: transform 0.2s ease;
+  }
+  details[open] summary::after { transform: rotate(180deg); }
+  .summary-count {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 16px;
+  }
+  .dropdown-body {
+    padding: 0 25px 20px 25px;
+    border-top: 1px solid var(--line);
+  }
+
+  .list { margin-top: 10px; }
+  .item {
+    padding: 10px 8px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .item:last-child { border-bottom: none; }
+  .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    background: #eee;
+    color: var(--muted);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .email-text {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--ink);
+    word-break: break-all;
+  }
+
+  /* Batch section */
+  .batch-section {
+    background: var(--green-soft);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+  }
+  .batch-section h3 {
+    margin-bottom: 10px;
+  }
+  .batch-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .batch-btn {
+    border: 1px solid var(--green);
+    background: #fff;
+    color: var(--green-dark);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .batch-btn:hover {
+    background: var(--green);
+    color: #fff;
+  }
+  .batch-btn.active {
+    background: var(--green);
+    color: #fff;
+  }
+  .batch-custom {
+    display: none;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .batch-custom.show { display: flex; }
+  .batch-custom input {
+    width: 120px;
+    padding: 8px 12px;
+  }
+  .batch-custom .btn {
+    width: auto;
+    margin-top: 0;
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+  .batch-summary {
+    font-size: 13px;
+    color: var(--green-dark);
+    font-weight: 600;
+    margin-top: 5px;
+  }
+  .batch-list { margin-top: 10px; }
+  .batch-group {
+    background: #fff;
+    border: 1px solid var(--green-soft);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .batch-group-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .batch-group-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--green-dark);
+  }
+  .batch-group-title span {
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 6px;
+  }
+  .batch-group-actions {
+    display: flex;
+    gap: 6px;
+  }
+  .btn-mini {
+    border: 0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--green-soft);
+    color: var(--green-dark);
+  }
+  .btn-mini:hover { background: var(--green); color: #fff; }
+
+  .status {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .status.error { color: var(--red); }
+  .status.success { color: var(--green-dark); font-weight: 600; }
+
+  .empty {
+    text-align: center;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"></div>
+  <h1>SwiftExtract</h1>
+</header>
+
+<main>
+  <div class="card">
+    <h2>1. Add Your Source</h2>
+
+    <div class="dropzone" id="dropzone">
+      <div class="dropzone-icon">📁</div>
+      <div class="dropzone-text">Drop files here or click to browse</div>
+      <div class="dropzone-sub">.txt, .csv, .md, .json, .html, .xml, .log, .pdf, .docx</div>
+      <input type="file" id="fileInput" multiple hidden
+        accept=".txt,.csv,.md,.json,.html,.htm,.xml,.log,.pdf,.docx">
+    </div>
+
+    <div class="file-list" id="fileList"></div>
+
+    <label>Or paste text below</label>
+    <textarea id="textInput" placeholder="Paste any text here — emails will be extracted from it..."></textarea>
+  </div>
+
+  <div class="card">
+    <h2>2. Extract</h2>
+
+    <div class="options">
+      <label><input type="checkbox" id="uniqueChk" checked> Remove duplicates</label>
+      <label><input type="checkbox" id="shuffleChk" checked> Shuffle randomly</label>
+      <div class="option-hint">Each user gets a different random order every time.</div>
+      <label><input type="checkbox" id="sortChk"> Sort A → Z (overrides shuffle)</label>
+    </div>
+
+    <label>Filter by domain (optional)</label>
+    <input type="text" id="filterInput" placeholder="e.g. gmail.com — leave empty for all">
+
+    <button class="btn" id="extractBtn">Extract Emails</button>
+    <div class="status" id="extractStatus"></div>
+  </div>
+
+  <details id="resultDetails">
+    <summary>
+      <span>Results <span class="summary-count" id="resultCount">(0)</span></span>
+    </summary>
+    <div class="dropdown-body">
+
+      <div class="btn-row">
+        <button class="btn secondary" id="reshuffleBtn">🔀 Reshuffle</button>
+        <button class="btn secondary" id="copyBtn">Copy All</button>
+        <button class="btn secondary" id="downloadTxtBtn">Download .txt</button>
+        <button class="btn secondary" id="downloadCsvBtn">Download .csv</button>
+      </div>
+
+      <!-- Batch grouping -->
+      <div class="batch-section">
+        <h3>Batch Grouping</h3>
+        <p class="status" style="margin-bottom: 10px; margin-top: 0;">Split results into smaller groups for sending in rounds.</p>
+
+        <div class="batch-buttons">
+          <button class="batch-btn" data-size="50">50</button>
+          <button class="batch-btn" data-size="250">250</button>
+          <button class="batch-btn" data-size="1000">1000</button>
+          <button class="batch-btn" data-size="custom">Custom</button>
+        </div>
+
+        <div class="batch-custom" id="batchCustom">
+          <input type="number" id="customSize" placeholder="e.g. 100" min="1">
+          <button class="btn" id="applyCustomBtn">Apply</button>
+        </div>
+
+        <div class="batch-summary" id="batchSummary"></div>
+        <div class="batch-list" id="batchList"></div>
+      </div>
+
+      <!-- Full list -->
+      <h3 style="margin-top: 20px;">Full List</h3>
+      <div class="list" id="resultList"></div>
+      <p class="empty" id="resultEmpty">No emails extracted yet.</p>
+    </div>
+  </details>
+
+  <div class="card">
+    <h2>Clear</h2>
+    <p class="status">Reset everything — files, text, and results.</p>
+    <button class="btn secondary" id="clearBtn" style="border-color: var(--red); color: var(--red);">Clear Everything</button>
+  </div>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  let selectedFiles = [];
+  let extractedEmails = [];
+  let currentBatchSize = 0; // 0 = no batching
+
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+
+  const EMAIL_REGEX = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
+
+  function extractFromText(text) {
+    if (!text) return [];
+    return text.match(EMAIL_REGEX) || [];
+  }
+
+  function shuffleArray(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function readAsText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = () => reject(new Error('Could not read file'));
+      reader.readAsText(file);
+    });
+  }
+
+  async function readPdf(file) {
+    const buffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+    let text = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(item => item.str).join(' ') + '\n';
+    }
+    return text;
+  }
+
+  async function readDocx(file) {
+    const buffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer: buffer });
+    return result.value;
+  }
+
+  async function readFile(file) {
+    const name = file.name.toLowerCase();
+    if (name.endsWith('.pdf')) return await readPdf(file);
+    if (name.endsWith('.docx')) return await readDocx(file);
+    return await readAsText(file);
+  }
+
+  const dropzone = $('dropzone');
+  const fileInput = $('fileInput');
+
+  dropzone.onclick = () => fileInput.click();
+
+  dropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+  });
+  dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('dragover');
+  });
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+  });
+
+  fileInput.onchange = e => handleFiles(e.target.files);
+
+  function handleFiles(fileList) {
+    for (const file of fileList) {
+      const exists = selectedFiles.some(f => f.name === file.name && f.size === file.size);
+      if (!exists) {
+        selectedFiles.push({ file, name: file.name, size: file.size });
+      }
+    }
+    renderFileList();
+  }
+
+  function renderFileList() {
+    const list = $('fileList');
+    list.innerHTML = '';
+    selectedFiles.forEach((entry) => {
+      const div = document.createElement('div');
+      div.className = 'file-item';
+      div.innerHTML = `
+        <span class="name">${entry.name}</span>
+        <span class="size">${formatSize(entry.size)}</span>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  $('extractBtn').onclick = async () => {
+    const status = $('extractStatus');
+    status.className = 'status';
+    status.textContent = 'Extracting...';
+
+    try {
+      let allText = '';
+
+      for (const entry of selectedFiles) {
+        try {
+          const text = await readFile(entry.file);
+          allText += '\n' + text;
+        } catch (err) {
+          console.warn('Failed to read', entry.name, err);
+          status.className = 'status error';
+          status.textContent = `Could not read "${entry.name}" — skipping.`;
+        }
+      }
+
+      allText += '\n' + $('textInput').value;
+
+      let emails = extractFromText(allText);
+
+      const filter = $('filterInput').value.trim().toLowerCase();
+      if (filter) {
+        emails = emails.filter(e => e.toLowerCase().endsWith('@' + filter) || e.toLowerCase().includes('@' + filter));
+      }
+
+      if ($('uniqueChk').checked) {
+        const seen = new Set();
+        emails = emails.filter(e => {
+          const lower = e.toLowerCase();
+          if (seen.has(lower)) return false;
+          seen.add(lower);
+          return true;
+        });
+      }
+
+      if ($('sortChk').checked) {
+        emails.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+      } else if ($('shuffleChk').checked) {
+        emails = shuffleArray(emails);
+      }
+
+      extractedEmails = emails;
+      renderResults();
+      renderBatches();
+
+      status.className = 'status success';
+      status.textContent = `Extracted ${emails.length} email(s).`;
+
+      if (emails.length > 0) {
+        $('resultDetails').open = true;
+      }
+    } catch (err) {
+      status.className = 'status error';
+      status.textContent = 'Error: ' + err.message;
+    }
+  };
+
+  function renderResults() {
+    const list = $('resultList');
+    list.innerHTML = '';
+    $('resultCount').textContent = `(${extractedEmails.length})`;
+
+    if (extractedEmails.length === 0) {
+      $('resultEmpty').style.display = 'block';
+      return;
+    }
+    $('resultEmpty').style.display = 'none';
+
+    extractedEmails.forEach((email, i) => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <span class="num">${i + 1}</span>
+        <span class="email-text">${email}</span>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  // --- Batch grouping ---
+  function renderBatches() {
+    const summary = $('batchSummary');
+    const list = $('batchList');
+    list.innerHTML = '';
+
+    if (currentBatchSize <= 0 || extractedEmails.length === 0) {
+      summary.textContent = '';
+      return;
+    }
+
+    const total = extractedEmails.length;
+    const batches = [];
+    for (let i = 0; i < total; i += currentBatchSize) {
+      batches.push(extractedEmails.slice(i, i + currentBatchSize));
+    }
+
+    summary.textContent = `${batches.length} batch${batches.length !== 1 ? 'es' : ''} of ${currentBatchSize} · ${total} emails total`;
+
+    batches.forEach((batch, idx) => {
+      const start = idx * currentBatchSize + 1;
+      const end = start + batch.length - 1;
+      const div = document.createElement('div');
+      div.className = 'batch-group';
+      div.innerHTML = `
+        <div class="batch-group-head">
+          <span class="batch-group-title">
+            Batch ${idx + 1} <span>(#${start} – #${end} · ${batch.length} emails)</span>
+          </span>
+          <div class="batch-group-actions">
+            <button class="btn-mini" data-copy-batch="${idx}">Copy</button>
+            <button class="btn-mini" data-download-batch="${idx}">Download</button>
+          </div>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+
+    // Attach handlers
+    list.querySelectorAll('[data-copy-batch]').forEach(btn => {
+      btn.onclick = async () => {
+        const idx = parseInt(btn.dataset.copyBatch);
+        const batch = batches[idx];
+        try {
+          await navigator.clipboard.writeText(batch.join('\n'));
+          const old = btn.textContent;
+          btn.textContent = '✓';
+          setTimeout(() => btn.textContent = old, 1200);
+        } catch (e) {
+          alert('Copy failed.');
+        }
+      };
+    });
+
+    list.querySelectorAll('[data-download-batch]').forEach(btn => {
+      btn.onclick = () => {
+        const idx = parseInt(btn.dataset.downloadBatch);
+        const batch = batches[idx];
+        downloadFile(batch.join('\n'), `batch-${idx + 1}.txt`, 'text/plain');
+      };
+    });
+  }
+
+  // Batch size buttons
+  document.querySelectorAll('.batch-btn').forEach(btn => {
+    btn.onclick = () => {
+      const size = btn.dataset.size;
+      document.querySelectorAll('.batch-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (size === 'custom') {
+        $('batchCustom').classList.add('show');
+        return;
+      }
+      $('batchCustom').classList.remove('show');
+      currentBatchSize = parseInt(size);
+      renderBatches();
+    };
+  });
+
+  $('applyCustomBtn').onclick = () => {
+    const val = parseInt($('customSize').value);
+    if (!val || val < 1) {
+      alert('Please enter a valid number.');
+      return;
+    }
+    currentBatchSize = val;
+    renderBatches();
+  };
+
+  // --- Reshuffle ---
+  $('reshuffleBtn').onclick = () => {
+    if (extractedEmails.length === 0) return;
+    extractedEmails = shuffleArray(extractedEmails);
+    renderResults();
+    renderBatches();
+  };
+
+  $('copyBtn').onclick = async () => {
+    if (extractedEmails.length === 0) return;
+    try {
+      await navigator.clipboard.writeText(extractedEmails.join('\n'));
+      const btn = $('copyBtn');
+      const old = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => btn.textContent = old, 1500);
+    } catch (e) {
+      alert('Copy failed. Your browser may block clipboard access on file:// pages.');
+    }
+  };
+
+  $('downloadTxtBtn').onclick = () => {
+    if (extractedEmails.length === 0) return;
+    downloadFile(extractedEmails.join('\n'), 'emails.txt', 'text/plain');
+  };
+
+  $('downloadCsvBtn').onclick = () => {
+    if (extractedEmails.length === 0) return;
+    const csv = 'email\n' + extractedEmails.map(e => `"${e}"`).join('\n');
+    downloadFile(csv, 'emails.csv', 'text/csv');
+  };
+
+  function downloadFile(content, filename, mime) {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  $('clearBtn').onclick = () => {
+    if (!confirm("Clear all files, text, and results?")) return;
+    selectedFiles = [];
+    extractedEmails = [];
+    currentBatchSize = 0;
+    $('textInput').value = '';
+    $('filterInput').value = '';
+    $('fileInput').value = '';
+    $('customSize').value = '';
+    $('extractStatus').textContent = '';
+    $('extractStatus').className = 'status';
+    document.querySelectorAll('.batch-btn').forEach(b => b.classList.remove('active'));
+    $('batchCustom').classList.remove('show');
+    renderFileList();
+    renderResults();
+    renderBatches();
+    $('resultDetails').open = false;
+  };
+
+  renderFileList();
+  renderResults();
+  renderBatches();
+</script>
+</body>
+</html>
