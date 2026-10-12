@@ -3,11 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SwiftExtract</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-
+<title>SwiftSend</title>
 <style>
   :root {
     --green-dark: #166534;
@@ -20,6 +16,7 @@
     --bg: #f0fdf4;
     --blue: #2563eb;
     --red: #dc2626;
+    --red-dark: #b91c1c;
     --orange: #f97316;
     --purple: #7c3aed;
     --amber: #d97706;
@@ -34,19 +31,20 @@
     color: var(--ink);
   }
   header {
-    height: 80px;
     background: var(--green-dark);
     color: #fff;
+    padding: 0 20px;
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    gap: 15px;
+    flex-wrap: wrap;
   }
+  .brand { display: flex; align-items: center; height: 70px; flex-shrink: 0; }
   .logo {
-    width: 32px;
-    height: 32px;
+    width: 30px; height: 30px;
     border: 2px solid #fff;
     border-radius: 50%;
-    margin-right: 12px;
+    margin-right: 10px;
     position: relative;
   }
   .logo::after {
@@ -55,11 +53,83 @@
     left: 3px; right: 3px; top: 3px;
     height: 1px; background: #fff;
   }
-  main {
-    max-width: 700px;
-    margin: 30px auto;
-    padding: 0 15px;
+  header h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.3px; }
+  .tabs { display: flex; gap: 4px; margin-left: auto; align-self: flex-end; }
+  .tab-btn {
+    background: transparent;
+    border: 0;
+    color: #fff;
+    padding: 12px 20px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 10px 10px 0 0;
+    opacity: 0.7;
+    transition: all 0.15s;
   }
+  .tab-btn:hover { opacity: 1; background: rgba(255,255,255,0.08); }
+  .tab-btn.active { opacity: 1; background: var(--bg); color: var(--green-dark); }
+  .tab-btn .badge {
+    display: inline-block;
+    background: var(--orange);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 10px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  main { max-width: 700px; margin: 25px auto; padding: 0 15px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .mode-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(22, 101, 52, 0.05);
+    flex-wrap: wrap;
+  }
+  .mode-bar-text { font-size: 13px; color: var(--muted); flex: 1; min-width: 180px; }
+  .mode-bar-text strong { color: var(--green-dark); }
+  .mode-toggle {
+    display: flex;
+    background: var(--green-soft);
+    border-radius: 30px;
+    padding: 4px;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .mode-btn {
+    border: 0;
+    background: transparent;
+    padding: 8px 22px;
+    border-radius: 26px;
+    font: inherit;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--green-dark);
+    transition: all 0.2s;
+  }
+  .mode-btn.active {
+    background: var(--green);
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(22, 101, 52, 0.25);
+  }
+  .mode-btn:hover:not(.active) { background: rgba(255,255,255,0.6); }
+
+  .mode-simple .only-advanced { display: none !important; }
+
   .card {
     background: #fff;
     border: 1px solid var(--line);
@@ -71,7 +141,7 @@
   h2 { font-size: 20px; margin-bottom: 15px; }
   h3 { font-size: 16px; margin-bottom: 10px; color: var(--green-dark); }
   label { display: block; font-weight: 600; margin: 15px 0 5px; }
-  input[type="text"], input[type="number"], textarea {
+  input[type="text"], input[type="number"], input[type="email"], textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid #d8d5e6;
@@ -97,24 +167,12 @@
     width: 100%;
     margin-top: 10px;
   }
-  .btn:hover {
-    background: linear-gradient(110deg, var(--green-dark), var(--green));
-  }
-  .btn.secondary {
-    background: #fff;
-    border: 1px solid #d8d5e6;
-    color: var(--ink);
-  }
-  .btn.secondary:hover {
-    background: var(--green-soft);
-    border-color: var(--green);
-    color: var(--green-dark);
-  }
-  .btn-row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
+  .btn:hover { background: linear-gradient(110deg, var(--green-dark), var(--green)); }
+  .btn.secondary { background: #fff; border: 1px solid #d8d5e6; color: var(--ink); }
+  .btn.secondary:hover { background: var(--green-soft); border-color: var(--green); color: var(--green-dark); }
+  .btn.reset { background: #fff; border: 1px solid var(--red); color: var(--red); }
+  .btn.reset:hover { background: var(--red); color: #fff; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn-row .btn { flex: 1; min-width: 120px; }
 
   .dropzone {
@@ -148,27 +206,9 @@
   .file-item .name { font-weight: 600; color: var(--green-dark); word-break: break-all; }
   .file-item .size { color: var(--muted); font-size: 12px; margin-left: 10px; flex-shrink: 0; }
 
-  .options {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 10px;
-  }
-  .options label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-    font-weight: 400;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  .options input[type="checkbox"] {
-    width: auto;
-    accent-color: var(--green);
-    cursor: pointer;
-  }
-  .option-hint { font-size: 12px; color: var(--muted); margin-left: 26px; }
+  .options { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .options label { display: flex; align-items: center; gap: 8px; margin: 0; font-weight: 400; cursor: pointer; font-size: 14px; }
+  .options input[type="checkbox"] { width: auto; accent-color: var(--green); cursor: pointer; }
 
   .chunk-controls {
     display: flex;
@@ -180,18 +220,8 @@
     border-radius: 12px;
   }
   .chunk-controls h3 { margin: 0 0 5px 0; }
-  .chunk-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .chunk-label {
-    font-weight: 600;
-    font-size: 13px;
-    color: var(--green-dark);
-    min-width: 80px;
-  }
+  .chunk-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .chunk-label { font-weight: 600; font-size: 13px; color: var(--green-dark); min-width: 80px; }
   .chip-btn {
     border: 1px solid var(--green);
     background: #fff;
@@ -203,13 +233,8 @@
     font-weight: 600;
     cursor: pointer;
   }
-  .chip-btn:hover { background: var(--green); color: #fff; }
-  .chip-btn.active { background: var(--green); color: #fff; }
-  #chunkCustomRow input {
-    width: 120px;
-    padding: 8px 12px;
-    font-size: 13px;
-  }
+  .chip-btn:hover, .chip-btn.active { background: var(--green); color: #fff; }
+  #xChunkCustomRow input { width: 120px; padding: 8px 12px; font-size: 13px; }
 
   .chunk-nav {
     display: none;
@@ -222,31 +247,10 @@
     text-align: center;
   }
   .chunk-nav.show { display: block; }
-  .chunk-nav-label {
-    font-size: 13px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 600;
-  }
-  .chunk-nav-info {
-    font-size: 17px;
-    color: var(--green-dark);
-    font-weight: 700;
-    margin: 8px 0 15px 0;
-  }
-  .chunk-nav-info span {
-    color: var(--muted);
-    font-weight: 400;
-    font-size: 14px;
-    display: block;
-    margin-top: 3px;
-  }
-  .chunk-nav-buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-  }
+  .chunk-nav-label { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .chunk-nav-info { font-size: 17px; color: var(--green-dark); font-weight: 700; margin: 8px 0 15px 0; }
+  .chunk-nav-info span { color: var(--muted); font-weight: 400; font-size: 14px; display: block; margin-top: 3px; }
+  .chunk-nav-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .chunk-nav-btn {
     border: 0;
     border-radius: 8px;
@@ -259,13 +263,13 @@
     min-width: 110px;
     font-size: 14px;
   }
-  .chunk-nav-btn:hover:not(:disabled) {
-    background: linear-gradient(110deg, var(--green-dark), var(--green));
+  .chunk-nav-btn:hover:not(:disabled) { background: linear-gradient(110deg, var(--green-dark), var(--green)); }
+  .chunk-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .chunk-nav-btn.send {
+    background: linear-gradient(110deg, var(--purple), #a855f7);
+    min-width: 160px;
   }
-  .chunk-nav-btn:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-  }
+  .chunk-nav-btn.send:hover:not(:disabled) { background: linear-gradient(110deg, #5b21b6, var(--purple)); }
 
   details {
     background: #fff;
@@ -297,11 +301,7 @@
   }
   details[open] > summary::after { transform: rotate(180deg); }
   .summary-count { color: var(--muted); font-weight: 400; font-size: 16px; }
-  .dropdown-body {
-    padding: 0 25px 20px 25px;
-    border-top: 1px solid var(--line);
-  }
-
+  .dropdown-body { padding: 0 25px 20px 25px; border-top: 1px solid var(--line); }
   details.nested {
     background: #fafffb;
     border: 1px solid var(--green-soft);
@@ -316,21 +316,11 @@
     color: var(--green-dark);
   }
   details.nested > summary:hover { background: var(--green-soft); }
-  details.nested .dropdown-body {
-    padding: 0 18px 15px 18px;
-  }
-
-  details.nested.amber {
-    background: #fffbeb;
-    border-color: #fbbf24;
-  }
+  details.nested .dropdown-body { padding: 0 18px 15px 18px; }
+  details.nested.amber { background: #fffbeb; border-color: #fbbf24; }
   details.nested.amber > summary { color: var(--amber-dark); }
   details.nested.amber > summary:hover { background: var(--amber-soft); }
-
-  details.nested.grey {
-    background: #f9fafb;
-    border-color: #d1d5db;
-  }
+  details.nested.grey { background: #f9fafb; border-color: #d1d5db; }
   details.nested.grey > summary { color: #4b5563; }
   details.nested.grey > summary:hover { background: #f3f4f6; }
 
@@ -358,12 +348,25 @@
   }
   .num.gmail { background: var(--orange); color: #fff; }
   .num.other { background: var(--purple); color: #fff; }
-  .email-text {
+  .num.done { background: var(--orange); color: #fff; }
+  .email-text { font-weight: 500; font-size: 14px; color: var(--ink); word-break: break-all; }
+
+  .email-link {
     font-weight: 500;
     font-size: 14px;
-    color: var(--ink);
+    color: var(--blue);
+    text-decoration: none;
+    cursor: pointer;
+    border-bottom: 1px dashed var(--blue);
     word-break: break-all;
   }
+  .email-link:hover { color: var(--green-dark); border-bottom-color: var(--green-dark); }
+  .email-link.sent {
+    color: var(--orange);
+    border-bottom: 1px dashed var(--orange);
+    text-decoration: line-through;
+  }
+  .email-link.sent:hover { color: var(--green-dark); border-bottom-color: var(--green-dark); text-decoration: none; }
 
   .batch-section {
     background: var(--green-soft);
@@ -371,18 +374,10 @@
     padding: 15px;
     margin: 15px 0;
   }
-  .batch-section.amber {
-    background: var(--amber-soft);
-    border: 1px solid #fbbf24;
-  }
+  .batch-section.amber { background: var(--amber-soft); border: 1px solid #fbbf24; }
   .batch-section.amber h3 { color: var(--amber-dark); }
   .batch-section.amber .batch-summary { color: var(--amber-dark); }
-
-  /* Leftover style */
-  .batch-section.grey {
-    background: #f3f4f6;
-    border: 1px dashed #9ca3af;
-  }
+  .batch-section.grey { background: #f3f4f6; border: 1px dashed #9ca3af; }
   .batch-section.grey h3 { color: #4b5563; }
   .batch-section.grey .batch-summary { color: #4b5563; }
 
@@ -398,30 +393,16 @@
     font-weight: 600;
     cursor: pointer;
   }
-  .batch-btn:hover { background: var(--green); color: #fff; }
-  .batch-btn.active { background: var(--green); color: #fff; }
-  .batch-btn.amber {
-    border-color: var(--amber);
-    color: var(--amber-dark);
-  }
-  .batch-btn.amber:hover { background: var(--amber); color: #fff; }
-  .batch-btn.amber.active { background: var(--amber); color: #fff; }
+  .batch-btn:hover, .batch-btn.active { background: var(--green); color: #fff; }
+  .batch-btn.amber { border-color: var(--amber); color: var(--amber-dark); }
+  .batch-btn.amber:hover, .batch-btn.amber.active { background: var(--amber); color: #fff; }
   .batch-custom { display: none; gap: 8px; align-items: center; margin-bottom: 10px; }
   .batch-custom.show { display: flex; }
   .batch-custom input { width: 120px; padding: 8px 12px; }
   .batch-custom .btn { width: auto; margin-top: 0; padding: 8px 16px; font-size: 14px; }
-  .batch-custom .btn.amber {
-    background: linear-gradient(110deg, var(--amber), #f59e0b);
-  }
-  .batch-custom .btn.amber:hover {
-    background: linear-gradient(110deg, var(--amber-dark), var(--amber));
-  }
-  .batch-summary {
-    font-size: 13px;
-    color: var(--green-dark);
-    font-weight: 600;
-    margin-top: 5px;
-  }
+  .batch-custom .btn.amber { background: linear-gradient(110deg, var(--amber), #f59e0b); }
+  .batch-custom .btn.amber:hover { background: linear-gradient(110deg, var(--amber-dark), var(--amber)); }
+  .batch-summary { font-size: 13px; color: var(--green-dark); font-weight: 600; margin-top: 5px; }
   .batch-list { margin-top: 10px; }
   .batch-group {
     background: #fff;
@@ -429,9 +410,14 @@
     border-radius: 10px;
     padding: 12px 14px;
     margin-bottom: 8px;
+    transition: all 0.15s;
   }
   .batch-group.amber { border-color: #fcd34d; }
   .batch-group.grey { border-color: #d1d5db; }
+  .batch-group.pushed { background: #fef2f2; border: 1px solid #fecaca; }
+  .batch-group.amber.pushed { background: #fef2f2; border-color: #fecaca; }
+  .batch-group.grey.pushed { background: #fef2f2; border-color: #fecaca; }
+
   .batch-group-head {
     display: flex;
     justify-content: space-between;
@@ -442,8 +428,27 @@
   .batch-group-title { font-weight: 700; font-size: 14px; color: var(--green-dark); }
   .batch-group.amber .batch-group-title { color: var(--amber-dark); }
   .batch-group.grey .batch-group-title { color: #4b5563; }
+  .batch-group.pushed .batch-group-title { color: var(--red-dark); }
   .batch-group-title span { font-weight: 400; color: var(--muted); margin-left: 6px; }
-  .batch-group-actions { display: flex; gap: 6px; }
+  .batch-group-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+  .pushed-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--red);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 0;
+    font-family: inherit;
+    letter-spacing: 0.3px;
+  }
+  .pushed-badge:hover { background: var(--red-dark); }
+
   .btn-mini {
     border: 0;
     border-radius: 6px;
@@ -453,18 +458,15 @@
     cursor: pointer;
     background: var(--green-soft);
     color: var(--green-dark);
+    font-family: inherit;
   }
   .btn-mini:hover { background: var(--green); color: #fff; }
-  .btn-mini.amber {
-    background: var(--amber-soft);
-    color: var(--amber-dark);
-  }
+  .btn-mini.amber { background: var(--amber-soft); color: var(--amber-dark); }
   .btn-mini.amber:hover { background: var(--amber); color: #fff; }
-  .btn-mini.grey {
-    background: #e5e7eb;
-    color: #4b5563;
-  }
+  .btn-mini.grey { background: #e5e7eb; color: #4b5563; }
   .btn-mini.grey:hover { background: #6b7280; color: #fff; }
+  .btn-mini.send { background: var(--purple); color: #fff; }
+  .btn-mini.send:hover { background: #5b21b6; }
 
   .batch-preview {
     width: 100%;
@@ -484,21 +486,12 @@
   }
   .batch-group.amber .batch-preview { background: #fffbeb; }
   .batch-group.grey .batch-preview { background: #f9fafb; }
-  .batch-preview:focus {
-    outline: none;
-    border-color: var(--green);
-    box-shadow: 0 0 0 2px var(--green-soft);
-  }
-  .batch-preview-hint {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 4px;
-    font-style: italic;
-  }
+  .batch-group.pushed .batch-preview { background: #fef2f2; }
+  .batch-preview:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 2px var(--green-soft); }
+  .batch-preview-hint { font-size: 11px; color: var(--muted); margin-top: 4px; font-style: italic; }
 
   .cat-dot {
-    width: 12px;
-    height: 12px;
+    width: 12px; height: 12px;
     border-radius: 50%;
     flex-shrink: 0;
     display: inline-block;
@@ -516,12 +509,7 @@
   }
   .mix-section h3 { color: var(--amber-dark); margin-bottom: 8px; }
   .mix-section .status { color: var(--amber-dark); }
-  .mix-presets {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-bottom: 12px;
-  }
+  .mix-presets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
   .mix-btn {
     border: 1px solid var(--amber);
     background: #fff;
@@ -532,14 +520,11 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
+    font-family: inherit;
   }
   .mix-btn:hover { background: #f59e0b; color: #fff; border-color: #f59e0b; }
   .mix-btn.active { background: var(--amber); color: #fff; border-color: var(--amber); }
-  .mix-input-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
+  .mix-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
   .mix-input-row input {
     flex: 1;
     padding: 10px 12px;
@@ -554,9 +539,7 @@
     padding: 10px 20px;
     background: linear-gradient(110deg, var(--amber), #f59e0b);
   }
-  .mix-input-row .btn:hover {
-    background: linear-gradient(110deg, var(--amber-dark), var(--amber));
-  }
+  .mix-input-row .btn:hover { background: linear-gradient(110deg, var(--amber-dark), var(--amber)); }
   .mix-result-stats {
     background: #fff;
     border-radius: 8px;
@@ -567,295 +550,491 @@
   }
   .mix-result-stats strong { color: var(--amber-dark); }
 
-  .status {
-    font-size: 13px;
-    color: var(--muted);
-    margin-top: 8px;
+  .analytics { display: flex; align-items: center; gap: 15px; }
+  .analytics-number {
+    font-size: 42px;
+    font-weight: 800;
+    background: linear-gradient(110deg, var(--green-dark), var(--green-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
   }
+  .analytics-label { font-size: 14px; color: var(--muted); }
+  .analytics-label strong { display: block; color: var(--ink); font-size: 16px; margin-bottom: 2px; }
+
+  .status { font-size: 13px; color: var(--muted); margin-top: 8px; }
   .status.error { color: var(--red); }
   .status.success { color: var(--green-dark); font-weight: 600; }
+  .empty { text-align: center; padding: 20px; color: var(--muted); font-size: 14px; }
 
-  .empty {
-    text-align: center;
-    padding: 20px;
-    color: var(--muted);
+  .toast {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--green-dark);
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 30px;
+    font-weight: 600;
     font-size: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    pointer-events: none;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Floating scroll buttons */
+  .scroll-nav {
+    position: fixed;
+    right: 15px;
+    bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .scroll-nav.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .scroll-nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(22, 101, 52, 0.25);
+    background: #fff;
+    color: var(--green-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(22, 101, 52, 0.15);
+    transition: all 0.15s ease;
+    padding: 0;
+    line-height: 1;
+    font-family: inherit;
+  }
+  .scroll-nav-btn:hover {
+    background: var(--green);
+    color: #fff;
+    border-color: var(--green);
+    transform: scale(1.08);
+  }
+  .scroll-nav-btn:active {
+    transform: scale(0.95);
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 0 12px; }
+    .brand { height: 60px; }
+    header h1 { font-size: 17px; }
+    .tab-btn { padding: 10px 14px; font-size: 14px; }
+    main { margin: 18px auto; }
+    .card { padding: 18px; }
+    .mode-bar { padding: 12px 14px; }
+    .mode-bar-text { font-size: 12px; }
+    .mode-btn { padding: 7px 16px; font-size: 13px; }
+    .scroll-nav { right: 12px; bottom: 12px; }
+    .scroll-nav-btn { width: 32px; height: 32px; font-size: 13px; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo"></div>
-  <h1>SwiftExtract</h1>
+  <div class="brand">
+    <div class="logo"></div>
+    <h1>SwiftSend</h1>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="extract" id="tabBtnExtract">Extract</button>
+    <button class="tab-btn" data-tab="send" id="tabBtnSend">Send <span class="badge" id="tabSendBadge" style="display:none;">0</span></button>
+  </nav>
 </header>
 
 <main>
-  <div class="card">
-    <h2>1. Add Your Source</h2>
 
-    <div class="dropzone" id="dropzone">
-      <div class="dropzone-icon">📁</div>
-      <div class="dropzone-text">Drop files here or click to browse</div>
-      <div class="dropzone-sub">.txt, .csv, .md, .json, .html, .xml, .log, .pdf, .docx</div>
-      <input type="file" id="fileInput" multiple hidden
-        accept=".txt,.csv,.md,.json,.html,.htm,.xml,.log,.pdf,.docx">
-    </div>
+  <!-- ============ EXTRACT TAB ============ -->
+  <div id="tab-extract" class="tab-panel active mode-simple">
 
-    <div class="file-list" id="fileList"></div>
-
-    <label>Or paste text below</label>
-    <textarea id="textInput" placeholder="Paste any text here — emails will be extracted from it..."></textarea>
-  </div>
-
-  <div class="card">
-    <h2>2. Extract</h2>
-
-    <div class="options">
-      <label><input type="checkbox" id="uniqueChk" checked> Remove duplicates</label>
-      <label><input type="checkbox" id="sortChk"> Sort A → Z (overrides shuffle)</label>
-    </div>
-
-    <label>Filter by domain (optional)</label>
-    <input type="text" id="filterInput" placeholder="e.g. gmail.com — leave empty for all">
-
-    <div class="chunk-controls">
-      <h3>📦 Working Set</h3>
-      <p class="status" style="margin: 0; color: var(--green-dark);">
-        Choose how many emails to see at a time. Then navigate chunk by chunk — perfect for daily rounds.
-      </p>
-
-      <div class="chunk-row">
-        <span class="chunk-label">Per chunk:</span>
-        <button class="chip-btn chunk-size-btn" data-size="1000">1,000</button>
-        <button class="chip-btn chunk-size-btn active" data-size="3000">3,000</button>
-        <button class="chip-btn chunk-size-btn" data-size="5000">5,000</button>
-        <button class="chip-btn chunk-size-btn" data-size="custom">Custom</button>
+    <div class="mode-bar">
+      <div class="mode-bar-text" id="modeHint">
+        <strong>Simple mode.</strong> Paste or upload, extract, group, and send.
       </div>
-
-      <div class="chunk-row" id="chunkCustomRow" style="display: none;">
-        <span class="chunk-label"></span>
-        <input type="number" id="chunkCustomSize" placeholder="e.g. 2000" min="1">
-      </div>
-
-      <div class="chunk-row">
-        <span class="chunk-label">Order:</span>
-        <button class="chip-btn chunk-order-btn active" data-order="ordered">In Order</button>
-        <button class="chip-btn chunk-order-btn" data-order="shuffled">🔀 Shuffle</button>
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="simple" id="modeBtnSimple">Simple</button>
+        <button class="mode-btn" data-mode="advanced" id="modeBtnAdvanced">Advanced</button>
       </div>
     </div>
 
-    <button class="btn" id="extractBtn" style="margin-top: 15px;">Extract Emails</button>
-    <div class="status" id="extractStatus"></div>
-  </div>
+    <div class="card">
+      <h2>1. Add Your Source</h2>
 
-  <div class="chunk-nav" id="chunkNav">
-    <div class="chunk-nav-label">Working Set</div>
-    <div class="chunk-nav-info" id="chunkNavInfo"></div>
-    <div class="chunk-nav-buttons">
-      <button class="chunk-nav-btn" id="prevChunkBtn">← Previous</button>
-      <button class="chunk-nav-btn" id="nextChunkBtn">Next →</button>
-    </div>
-  </div>
-
-  <details id="resultDetails">
-    <summary>
-      <span>Results <span class="summary-count" id="resultCount">(0)</span></span>
-    </summary>
-    <div class="dropdown-body">
-      <div class="btn-row">
-        <button class="btn secondary" id="reshuffleBtn">🔀 Reshuffle Chunk</button>
-        <button class="btn secondary" id="copyBtn">Copy Chunk</button>
-        <button class="btn secondary" id="downloadTxtBtn">Download .txt</button>
-        <button class="btn secondary" id="downloadCsvBtn">Download .csv</button>
+      <div class="dropzone" id="xDropzone">
+        <div class="dropzone-icon">📁</div>
+        <div class="dropzone-text">Drop files here or click to browse</div>
+        <div class="dropzone-sub">.txt, .csv, .md, .json, .html, .xml, .log, .pdf, .docx</div>
+        <input type="file" id="xFileInput" multiple hidden
+          accept=".txt,.csv,.md,.json,.html,.htm,.xml,.log,.pdf,.docx">
       </div>
 
-      <div class="batch-section">
-        <h3>Batch Grouping</h3>
-        <p class="status" style="margin-bottom: 10px; margin-top: 0;">Split current chunk into smaller groups for sending rounds.</p>
+      <div class="file-list" id="xFileList"></div>
 
-        <div class="batch-buttons">
-          <button class="batch-btn" data-size="50">50</button>
-          <button class="batch-btn" data-size="250">250</button>
-          <button class="batch-btn" data-size="1000">1000</button>
-          <button class="batch-btn" data-size="custom">Custom</button>
-        </div>
+      <label>Or paste text below</label>
+      <textarea id="xTextInput" placeholder="Paste any text here — emails will be extracted from it..."></textarea>
+    </div>
 
-        <div class="batch-custom" id="batchCustom">
-          <input type="number" id="customSize" placeholder="e.g. 100" min="1">
-          <button class="btn" id="applyCustomBtn">Apply</button>
-        </div>
+    <div class="card">
+      <h2>2. Extract</h2>
 
-        <div class="batch-summary" id="batchSummary"></div>
-        <div class="batch-list" id="batchList"></div>
+      <div class="options">
+        <label><input type="checkbox" id="xUniqueChk" checked> Remove duplicates</label>
+        <label><input type="checkbox" id="xSortChk"> Sort A → Z (overrides shuffle)</label>
       </div>
 
-      <details class="nested" id="fullListDetails">
-        <summary>
-          <span>Full Chunk <span class="summary-count" id="fullListCount">(0)</span></span>
-        </summary>
-        <div class="dropdown-body">
-          <div class="list" id="resultList"></div>
-          <p class="empty" id="resultEmpty">No emails extracted yet.</p>
-        </div>
-      </details>
-    </div>
-  </details>
+      <label>Filter by domain (optional)</label>
+      <input type="text" id="xFilterInput" placeholder="e.g. gmail.com — leave empty for all">
 
-  <details id="gmailDetails">
-    <summary>
-      <span>
-        <span class="cat-dot gmail"></span>
-        Gmail - Personal <span class="summary-count" id="gmailCount">(0)</span>
-      </span>
-    </summary>
-    <div class="dropdown-body">
-      <p class="status">All @gmail.com and @googlemail.com addresses in the current chunk.</p>
-      <div class="btn-row">
-        <button class="btn secondary" id="copyGmailBtn">Copy Gmail List</button>
-        <button class="btn secondary" id="downloadGmailBtn">Download .txt</button>
-      </div>
-      <div class="list" id="gmailList"></div>
-      <p class="empty" id="gmailEmpty">No Gmail addresses yet.</p>
-    </div>
-  </details>
-
-  <details id="otherDetails">
-    <summary>
-      <span>
-        <span class="cat-dot other"></span>
-        Other - Work <span class="summary-count" id="otherCount">(0)</span>
-      </span>
-    </summary>
-    <div class="dropdown-body">
-      <p class="status">Everything that isn't Gmail — work, business, custom domains.</p>
-      <div class="btn-row">
-        <button class="btn secondary" id="copyOtherBtn">Copy Other List</button>
-        <button class="btn secondary" id="downloadOtherBtn">Download .txt</button>
-      </div>
-      <div class="list" id="otherList"></div>
-      <p class="empty" id="otherEmpty">No other addresses yet.</p>
-    </div>
-  </details>
-
-  <!-- Mix Ratio -->
-  <details id="mixDetails">
-    <summary>
-      <span>🔀 Mix Ratio</span>
-    </summary>
-    <div class="dropdown-body">
-      <div class="mix-section">
-        <h3>Mix Gmail + Other in a Ratio</h3>
-        <p class="status" style="margin-bottom: 12px;">
-          Build a list with more Gmail than Work (or vice versa). Uses the current chunk.
+      <div class="chunk-controls only-advanced">
+        <h3>📦 Working Set</h3>
+        <p class="status" style="margin: 0; color: var(--green-dark);">
+          Choose how many emails to see at a time. Then navigate chunk by chunk.
         </p>
 
-        <label style="color: var(--amber-dark); margin-top: 0;">Preset ratios (Gmail : Other)</label>
-        <div class="mix-presets">
-          <button class="mix-btn" data-g="1" data-o="1">1:1</button>
-          <button class="mix-btn" data-g="2" data-o="1">2:1</button>
-          <button class="mix-btn" data-g="3" data-o="1">3:1</button>
-          <button class="mix-btn" data-g="4" data-o="1">4:1</button>
-          <button class="mix-btn" data-g="5" data-o="1">5:1</button>
-          <button class="mix-btn" data-g="1" data-o="2">1:2</button>
-          <button class="mix-btn" data-g="1" data-o="3">1:3</button>
+        <div class="chunk-row">
+          <span class="chunk-label">Per chunk:</span>
+          <button class="chip-btn chunk-size-btn" data-size="1000">1,000</button>
+          <button class="chip-btn chunk-size-btn active" data-size="3000">3,000</button>
+          <button class="chip-btn chunk-size-btn" data-size="5000">5,000</button>
+          <button class="chip-btn chunk-size-btn" data-size="custom">Custom</button>
         </div>
 
-        <label style="color: var(--amber-dark);">Or type your own — e.g. <code>200:50</code> or <code>3:1</code></label>
-        <div class="mix-input-row">
-          <input type="text" id="mixInput" placeholder="e.g. 2:1 or 200:50">
-          <button class="btn" id="applyMixBtn">Generate Mix</button>
+        <div class="chunk-row" id="xChunkCustomRow" style="display: none;">
+          <span class="chunk-label"></span>
+          <input type="number" id="xChunkCustomSize" placeholder="e.g. 2000" min="1">
         </div>
 
-        <div class="mix-result-stats" id="mixStats" style="display: none;"></div>
+        <div class="chunk-row">
+          <span class="chunk-label">Order:</span>
+          <button class="chip-btn chunk-order-btn active" data-order="ordered">In Order</button>
+          <button class="chip-btn chunk-order-btn" data-order="shuffled">🔀 Shuffle</button>
+        </div>
+      </div>
 
-        <div class="btn-row" id="mixActionRow" style="display: none; margin-top: 10px;">
-          <button class="btn secondary" id="copyMixBtn" style="background: #fff; border-color: #fbbf24; color: var(--amber-dark);">Copy Mixed List</button>
-          <button class="btn secondary" id="downloadMixBtn" style="background: #fff; border-color: #fbbf24; color: var(--amber-dark);">Download .txt</button>
+      <button class="btn" id="xExtractBtn" style="margin-top: 15px;">Extract Emails</button>
+      <div class="status" id="xExtractStatus"></div>
+    </div>
+
+    <div class="chunk-nav only-advanced" id="xChunkNav">
+      <div class="chunk-nav-label">Working Set</div>
+      <div class="chunk-nav-info" id="xChunkNavInfo"></div>
+      <div class="chunk-nav-buttons">
+        <button class="chunk-nav-btn" id="xPrevChunkBtn">← Previous</button>
+        <button class="chunk-nav-btn send" id="xSendChunkBtn">Send This Chunk →</button>
+        <button class="chunk-nav-btn" id="xNextChunkBtn">Next →</button>
+      </div>
+    </div>
+
+    <details id="xResultDetails">
+      <summary>
+        <span>Results <span class="summary-count" id="xResultCount">(0)</span></span>
+      </summary>
+      <div class="dropdown-body">
+        <div class="btn-row">
+          <button class="btn secondary" id="xReshuffleBtn">🔀 Reshuffle</button>
+          <button class="btn secondary" id="xCopyChunkBtn">Copy All</button>
+          <button class="btn secondary" id="xSendChunkFromResultsBtn" style="background: var(--purple); color: #fff; border-color: var(--purple);">Send All →</button>
         </div>
 
-        <!-- Mix Batch Grouping -->
-        <div class="batch-section amber" id="mixBatchSection" style="display: none;">
-          <h3>Batch Grouping for Mixed List</h3>
-          <p class="status" style="margin-bottom: 10px; margin-top: 0; color: var(--amber-dark);">Split the mixed list into smaller groups.</p>
+        <div class="batch-section">
+          <h3>Batch Grouping</h3>
+          <p class="status" style="margin-bottom: 10px; margin-top: 0;">Split your list into smaller groups. Click <strong>Send →</strong> on a batch to push it to the Send tab.</p>
 
           <div class="batch-buttons">
-            <button class="batch-btn amber mix-batch-btn" data-size="50">50</button>
-            <button class="batch-btn amber mix-batch-btn" data-size="250">250</button>
-            <button class="batch-btn amber mix-batch-btn" data-size="500">500</button>
-            <button class="batch-btn amber mix-batch-btn" data-size="1000">1000</button>
-            <button class="batch-btn amber mix-batch-btn" data-size="custom">Custom</button>
+            <button class="batch-btn" data-size="50">50</button>
+            <button class="batch-btn" data-size="250">250</button>
+            <button class="batch-btn" data-size="500">500</button>
+            <button class="batch-btn" data-size="1000">1000</button>
+            <button class="batch-btn" data-size="custom">Custom</button>
           </div>
 
-          <div class="batch-custom" id="mixBatchCustom">
-            <input type="number" id="mixCustomSize" placeholder="e.g. 100" min="1">
-            <button class="btn amber" id="applyMixCustomBtn">Apply</button>
+          <div class="batch-custom" id="xBatchCustom">
+            <input type="number" id="xCustomSize" placeholder="e.g. 100" min="1">
+            <button class="btn" id="xApplyCustomBtn">Apply</button>
           </div>
 
-          <div class="batch-summary" id="mixBatchSummary"></div>
-          <div class="batch-list" id="mixBatchList"></div>
+          <div class="batch-summary" id="xBatchSummary"></div>
+          <div class="batch-list" id="xBatchList"></div>
         </div>
 
-        <!-- Leftover Section -->
-        <div class="batch-section grey" id="mixLeftoverSection" style="display: none;">
-          <h3>⚠ Leftover (Not in Mix)</h3>
-          <p class="status" style="margin-bottom: 10px; margin-top: 0; color: #4b5563;">
-            Emails that didn't fit into the ratio. Grouped by the same batch size as above.
-          </p>
-          <div class="batch-list" id="mixLeftoverList"></div>
-        </div>
-
-        <!-- Full Mixed List -->
-        <details class="nested amber" id="mixListDetails" style="display: none;">
+        <details class="nested" id="xFullListDetails">
           <summary>
-            <span>Full Mixed List <span class="summary-count" id="mixListCount">(0)</span></span>
+            <span>Full List <span class="summary-count" id="xFullListCount">(0)</span></span>
           </summary>
           <div class="dropdown-body">
-            <div class="list" id="mixList"></div>
-          </div>
-        </details>
-
-        <!-- Full Leftover List -->
-        <details class="nested grey" id="mixLeftoverDetails" style="display: none;">
-          <summary>
-            <span>Full Leftover List <span class="summary-count" id="mixLeftoverCount">(0)</span></span>
-          </summary>
-          <div class="dropdown-body">
-            <div class="list" id="mixLeftoverFullList"></div>
+            <div class="list" id="xResultList"></div>
+            <p class="empty" id="xResultEmpty">No emails extracted yet.</p>
           </div>
         </details>
       </div>
-    </div>
-  </details>
+    </details>
 
-  <div class="card">
-    <h2>Clear</h2>
-    <p class="status">Reset everything — files, text, and results.</p>
-    <button class="btn secondary" id="clearBtn" style="border-color: var(--red); color: var(--red);">Clear Everything</button>
+    <details id="xGmailDetails" class="only-advanced">
+      <summary>
+        <span>
+          <span class="cat-dot gmail"></span>
+          Gmail - Personal <span class="summary-count" id="xGmailCount">(0)</span>
+        </span>
+      </summary>
+      <div class="dropdown-body">
+        <p class="status">All @gmail.com and @googlemail.com addresses in the current chunk.</p>
+        <div class="btn-row">
+          <button class="btn secondary" id="xCopyGmailBtn">Copy Gmail List</button>
+          <button class="btn secondary" id="xSendGmailBtn" style="background: var(--purple); color: #fff; border-color: var(--purple);">Send Gmail →</button>
+        </div>
+        <div class="list" id="xGmailList"></div>
+        <p class="empty" id="xGmailEmpty">No Gmail addresses yet.</p>
+      </div>
+    </details>
+
+    <details id="xOtherDetails" class="only-advanced">
+      <summary>
+        <span>
+          <span class="cat-dot other"></span>
+          Other - Work <span class="summary-count" id="xOtherCount">(0)</span>
+        </span>
+      </summary>
+      <div class="dropdown-body">
+        <p class="status">Everything that isn't Gmail — work, business, custom domains.</p>
+        <div class="btn-row">
+          <button class="btn secondary" id="xCopyOtherBtn">Copy Other List</button>
+          <button class="btn secondary" id="xSendOtherBtn" style="background: var(--purple); color: #fff; border-color: var(--purple);">Send Other →</button>
+        </div>
+        <div class="list" id="xOtherList"></div>
+        <p class="empty" id="xOtherEmpty">No other addresses yet.</p>
+      </div>
+    </details>
+
+    <details id="xMixDetails" class="only-advanced">
+      <summary>
+        <span>🔀 Mix Ratio</span>
+      </summary>
+      <div class="dropdown-body">
+        <div class="mix-section">
+          <h3>Mix Gmail + Other in a Ratio</h3>
+          <p class="status" style="margin-bottom: 12px;">
+            Build a list with more Gmail than Work (or vice versa). Uses the current chunk.
+          </p>
+
+          <label style="color: var(--amber-dark); margin-top: 0;">Preset ratios (Gmail : Other)</label>
+          <div class="mix-presets">
+            <button class="mix-btn" data-g="1" data-o="1">1:1</button>
+            <button class="mix-btn" data-g="2" data-o="1">2:1</button>
+            <button class="mix-btn" data-g="3" data-o="1">3:1</button>
+            <button class="mix-btn" data-g="4" data-o="1">4:1</button>
+            <button class="mix-btn" data-g="5" data-o="1">5:1</button>
+            <button class="mix-btn" data-g="1" data-o="2">1:2</button>
+            <button class="mix-btn" data-g="1" data-o="3">1:3</button>
+          </div>
+
+          <label style="color: var(--amber-dark);">Or type your own — e.g. <code>200:50</code> or <code>3:1</code></label>
+          <div class="mix-input-row">
+            <input type="text" id="xMixInput" placeholder="e.g. 2:1 or 200:50">
+            <button class="btn" id="xApplyMixBtn">Generate Mix</button>
+          </div>
+
+          <div class="mix-result-stats" id="xMixStats" style="display: none;"></div>
+
+          <div class="btn-row" id="xMixActionRow" style="display: none; margin-top: 10px;">
+            <button class="btn secondary" id="xCopyMixBtn" style="background: #fff; border-color: #fbbf24; color: var(--amber-dark);">Copy Mixed List</button>
+            <button class="btn secondary" id="xSendMixBtn" style="background: var(--purple); color: #fff; border-color: var(--purple);">Send Mixed →</button>
+          </div>
+
+          <div class="batch-section amber" id="xMixBatchSection" style="display: none;">
+            <h3>Batch Grouping for Mixed List</h3>
+            <p class="status" style="margin-bottom: 10px; margin-top: 0; color: var(--amber-dark);">Split the mixed list into smaller groups.</p>
+
+            <div class="batch-buttons">
+              <button class="batch-btn amber mix-batch-btn" data-size="50">50</button>
+              <button class="batch-btn amber mix-batch-btn" data-size="250">250</button>
+              <button class="batch-btn amber mix-batch-btn" data-size="500">500</button>
+              <button class="batch-btn amber mix-batch-btn" data-size="1000">1000</button>
+              <button class="batch-btn amber mix-batch-btn" data-size="custom">Custom</button>
+            </div>
+
+            <div class="batch-custom" id="xMixBatchCustom">
+              <input type="number" id="xMixCustomSize" placeholder="e.g. 100" min="1">
+              <button class="btn amber" id="xApplyMixCustomBtn">Apply</button>
+            </div>
+
+            <div class="batch-summary" id="xMixBatchSummary"></div>
+            <div class="batch-list" id="xMixBatchList"></div>
+          </div>
+
+          <div class="batch-section grey" id="xMixLeftoverSection" style="display: none;">
+            <h3>⚠ Leftover (Not in Mix)</h3>
+            <p class="status" style="margin-bottom: 10px; margin-top: 0; color: #4b5563;">
+              Emails that didn't fit into the ratio. Grouped by the same batch size as above.
+            </p>
+            <div class="batch-list" id="xMixLeftoverList"></div>
+          </div>
+
+          <details class="nested amber" id="xMixListDetails" style="display: none;">
+            <summary>
+              <span>Full Mixed List <span class="summary-count" id="xMixListCount">(0)</span></span>
+            </summary>
+            <div class="dropdown-body">
+              <div class="list" id="xMixList"></div>
+            </div>
+          </details>
+
+          <details class="nested grey" id="xMixLeftoverDetails" style="display: none;">
+            <summary>
+              <span>Full Leftover List <span class="summary-count" id="xMixLeftoverCount">(0)</span></span>
+            </summary>
+            <div class="dropdown-body">
+              <div class="list" id="xMixLeftoverFullList"></div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </details>
+
+    <div class="card">
+      <h2>Clear Extract</h2>
+      <p class="status">Reset the extract tab — files, text, and results. Also unmarks all pushed batches.</p>
+      <button class="btn reset" id="xClearBtn">Clear Extract</button>
+    </div>
   </div>
+
+  <!-- ============ SEND TAB ============ -->
+  <div id="tab-send" class="tab-panel">
+
+    <div class="card">
+      <h2>Analytics</h2>
+      <div class="analytics">
+        <div class="analytics-number" id="sAnalyticsCount">0</div>
+        <div class="analytics-label">
+          <strong>Emails sent in the last 24 hours</strong>
+          <span>Resets automatically after 24 hours.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>1. Add Recipients</h2>
+      <label>Paste your list of emails below</label>
+      <textarea id="sBulkEmails" placeholder="email1@example.com&#10;email2@example.com&#10;email3@example.com"></textarea>
+      <p class="status">Separate emails with commas, spaces, or new lines.</p>
+      <button class="btn" id="sAddBtn">Generate List</button>
+      <div class="status" id="sAddStatus"></div>
+    </div>
+
+    <details id="sComposeDetails">
+      <summary>
+        <span>2. Compose Email</span>
+      </summary>
+      <div class="dropdown-body">
+        <label>Subject</label>
+        <input type="text" id="sSubject" placeholder="Enter email subject">
+        <label>Message</label>
+        <textarea id="sBody" placeholder="Write your email here..."></textarea>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span>3. Test Email (Optional)</span>
+      </summary>
+      <div class="dropdown-body">
+        <label>Send a test to yourself first</label>
+        <input type="email" id="sTestEmail" placeholder="your-test@example.com">
+        <button class="btn" id="sTestBtn">Send Test Email</button>
+        <div class="status" id="sTestStatus"></div>
+      </div>
+    </details>
+
+    <details id="sPendingDetails">
+      <summary>
+        <span>4. Pending <span class="summary-count" id="sPendingCount">(0)</span></span>
+      </summary>
+      <div class="dropdown-body">
+        <div class="list" id="sPendingList"></div>
+        <p class="status" id="sPendingStatus">No emails added yet.</p>
+      </div>
+    </details>
+
+    <details id="sAllDetails">
+      <summary>
+        <span>5. All Recipients <span class="summary-count" id="sAllCount">(0)</span></span>
+      </summary>
+      <div class="dropdown-body">
+        <div class="list" id="sAllList"></div>
+        <p class="status" id="sAllStatus">No emails added yet.</p>
+      </div>
+    </details>
+
+    <div class="card">
+      <h2>Reset</h2>
+      <p class="status">This will clear all recipients and reset the analytics. Cannot be undone.</p>
+      <button class="btn reset" id="sResetBtn">Reset Everything</button>
+    </div>
+  </div>
+
 </main>
 
+<!-- Floating scroll buttons -->
+<div class="scroll-nav" id="scrollNav">
+  <button class="scroll-nav-btn" id="scrollTopBtn" title="Go to top">↑</button>
+  <button class="scroll-nav-btn" id="scrollBottomBtn" title="Go to bottom">↓</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
+  /* ============================================
+     HELPERS
+     ============================================ */
   const $ = id => document.getElementById(id);
 
-  let selectedFiles = [];
-  let masterEmails = [];
-  let masterMode = 'ordered';
-  let chunkSize = 3000;
-  let chunkIndex = 0;
+  const store = {
+    get(key, fallback) {
+      try {
+        const v = localStorage.getItem(key);
+        return v ? JSON.parse(v) : fallback;
+      } catch (e) { return fallback; }
+    },
+    set(key, val) {
+      try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+    },
+    remove(key) {
+      try { localStorage.removeItem(key); } catch (e) {}
+    },
+    getRaw(key, fallback) {
+      try { return localStorage.getItem(key) || fallback; } catch (e) { return fallback; }
+    },
+    setRaw(key, val) {
+      try { localStorage.setItem(key, val); } catch (e) {}
+    }
+  };
 
-  let extractedEmails = [];
-  let gmailEmails = [];
-  let otherEmails = [];
-  let mixedEmails = [];
-  let leftoverEmails = [];
-  let currentBatchSize = 0;
-  let currentMixBatchSize = 0;
-  let currentMixRatio = null;
-
-  if (window.pdfjsLib) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  function showToast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2200);
   }
 
   const EMAIL_REGEX = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
@@ -880,8 +1059,7 @@
   }
 
   function splitEmails(emails) {
-    const gmail = [];
-    const other = [];
+    const gmail = [], other = [];
     emails.forEach(e => {
       if (isGmail(e)) gmail.push(e);
       else other.push(e);
@@ -889,7 +1067,154 @@
     return { gmail, other };
   }
 
-  function readAsText(file) {
+  function downloadFile(content, filename, mime) {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  /* ============================================
+     MODE
+     ============================================ */
+  let currentMode = store.getRaw('swiftsend_extractMode', 'simple');
+  if (currentMode !== 'simple' && currentMode !== 'advanced') currentMode = 'simple';
+
+  function setMode(mode) {
+    currentMode = mode;
+    store.setRaw('swiftsend_extractMode', mode);
+
+    const tab = $('tab-extract');
+    tab.classList.toggle('mode-simple', mode === 'simple');
+
+    document.querySelectorAll('.mode-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.mode === mode);
+    });
+
+    $('modeHint').innerHTML = mode === 'simple'
+      ? '<strong>Simple mode.</strong> Paste or upload, extract, group, and send.'
+      : '<strong>Advanced mode.</strong> Full controls: chunking, Gmail/Other split, mix ratio.';
+
+    const sendAllLabel = mode === 'simple' ? 'Send All →' : 'Send Chunk →';
+    $('xSendChunkFromResultsBtn').textContent = sendAllLabel;
+    $('xSendChunkBtn').textContent = sendAllLabel;
+
+    if (xMasterEmails.length > 0) {
+      xChunkIndex = 0;
+      xLoadChunk();
+    }
+  }
+
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.onclick = () => setMode(btn.dataset.mode);
+  });
+
+  /* ============================================
+     TABS
+     ============================================ */
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === name);
+    });
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.classList.toggle('active', p.id === 'tab-' + name);
+    });
+    store.setRaw('swiftsend_activeTab', name);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (name === 'send') sRender();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.onclick = () => switchTab(btn.dataset.tab);
+  });
+
+  const lastTab = store.getRaw('swiftsend_activeTab', 'extract');
+  if (lastTab === 'send' || lastTab === 'extract') switchTab(lastTab);
+
+  /* ============================================
+     LAZY LOAD LIBS
+     ============================================ */
+  let libsLoaded = false;
+  let libsLoadingPromise = null;
+
+  function loadLibs() {
+    if (libsLoaded) return Promise.resolve();
+    if (libsLoadingPromise) return libsLoadingPromise;
+
+    libsLoadingPromise = new Promise((resolve, reject) => {
+      let remaining = 2;
+      const done = () => { if (--remaining === 0) { libsLoaded = true; resolve(); } };
+
+      const pdfScript = document.createElement('script');
+      pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      pdfScript.onload = () => {
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        done();
+      };
+      pdfScript.onerror = () => reject(new Error('Failed to load PDF library'));
+
+      const mammothScript = document.createElement('script');
+      mammothScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+      mammothScript.onload = done;
+      mammothScript.onerror = () => reject(new Error('Failed to load DOCX library'));
+
+      document.head.appendChild(pdfScript);
+      document.head.appendChild(mammothScript);
+    });
+
+    return libsLoadingPromise;
+  }
+
+  /* ============================================
+     PUSHED BATCH TRACKING
+     ============================================ */
+  let xPushedEmails = new Set(store.get('swiftsend_pushedEmails', []));
+
+  function isBatchPushed(batch) {
+    return batch.every(email => xPushedEmails.has(email.toLowerCase()));
+  }
+
+  function markBatchPushed(batch) {
+    batch.forEach(email => xPushedEmails.add(email.toLowerCase()));
+    store.set('swiftsend_pushedEmails', Array.from(xPushedEmails));
+  }
+
+  function unmarkBatchPushed(batch) {
+    batch.forEach(email => xPushedEmails.delete(email.toLowerCase()));
+    store.set('swiftsend_pushedEmails', Array.from(xPushedEmails));
+  }
+
+  /* ============================================
+     EXTRACT TAB
+     ============================================ */
+  let xSelectedFiles = [];
+  let xMasterEmails = [];
+  let xMasterMode = 'ordered';
+  let xChunkSize = 3000;
+  let xChunkIndex = 0;
+
+  let xExtractedEmails = [];
+  let xGmailEmails = [];
+  let xOtherEmails = [];
+  let xMixedEmails = [];
+  let xLeftoverEmails = [];
+  let xCurrentBatchSize = 0;
+  let xCurrentMixBatchSize = 0;
+  let xCurrentMixRatio = null;
+
+  function xReadAsText(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = e => resolve(e.target.result);
@@ -898,7 +1223,8 @@
     });
   }
 
-  async function readPdf(file) {
+  async function xReadPdf(file) {
+    await loadLibs();
     const buffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
     let text = '';
@@ -910,53 +1236,48 @@
     return text;
   }
 
-  async function readDocx(file) {
+  async function xReadDocx(file) {
+    await loadLibs();
     const buffer = await file.arrayBuffer();
     const result = await mammoth.extractRawText({ arrayBuffer: buffer });
     return result.value;
   }
 
-  async function readFile(file) {
+  async function xReadFile(file) {
     const name = file.name.toLowerCase();
-    if (name.endsWith('.pdf')) return await readPdf(file);
-    if (name.endsWith('.docx')) return await readDocx(file);
-    return await readAsText(file);
+    if (name.endsWith('.pdf')) return await xReadPdf(file);
+    if (name.endsWith('.docx')) return await xReadDocx(file);
+    return await xReadAsText(file);
   }
 
-  const dropzone = $('dropzone');
-  const fileInput = $('fileInput');
+  const xDropzone = $('xDropzone');
+  const xFileInput = $('xFileInput');
 
-  dropzone.onclick = () => fileInput.click();
-
-  dropzone.addEventListener('dragover', e => {
+  xDropzone.onclick = () => xFileInput.click();
+  xDropzone.addEventListener('dragover', e => {
     e.preventDefault();
-    dropzone.classList.add('dragover');
+    xDropzone.classList.add('dragover');
   });
-  dropzone.addEventListener('dragleave', () => {
-    dropzone.classList.remove('dragover');
-  });
-  dropzone.addEventListener('drop', e => {
+  xDropzone.addEventListener('dragleave', () => xDropzone.classList.remove('dragover'));
+  xDropzone.addEventListener('drop', e => {
     e.preventDefault();
-    dropzone.classList.remove('dragover');
-    handleFiles(e.dataTransfer.files);
+    xDropzone.classList.remove('dragover');
+    xHandleFiles(e.dataTransfer.files);
   });
+  xFileInput.onchange = e => xHandleFiles(e.target.files);
 
-  fileInput.onchange = e => handleFiles(e.target.files);
-
-  function handleFiles(fileList) {
+  function xHandleFiles(fileList) {
     for (const file of fileList) {
-      const exists = selectedFiles.some(f => f.name === file.name && f.size === file.size);
-      if (!exists) {
-        selectedFiles.push({ file, name: file.name, size: file.size });
-      }
+      const exists = xSelectedFiles.some(f => f.name === file.name && f.size === file.size);
+      if (!exists) xSelectedFiles.push({ file, name: file.name, size: file.size });
     }
-    renderFileList();
+    xRenderFileList();
   }
 
-  function renderFileList() {
-    const list = $('fileList');
+  function xRenderFileList() {
+    const list = $('xFileList');
     list.innerHTML = '';
-    selectedFiles.forEach((entry) => {
+    xSelectedFiles.forEach(entry => {
       const div = document.createElement('div');
       div.className = 'file-item';
       div.innerHTML = `
@@ -967,35 +1288,27 @@
     });
   }
 
-  function formatSize(bytes) {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-  }
-
-  // ---- Working Set controls ----
   document.querySelectorAll('.chunk-size-btn').forEach(btn => {
     btn.onclick = () => {
       document.querySelectorAll('.chunk-size-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-
       if (btn.dataset.size === 'custom') {
-        $('chunkCustomRow').style.display = 'flex';
+        $('xChunkCustomRow').style.display = 'flex';
         return;
       }
-      $('chunkCustomRow').style.display = 'none';
-      chunkSize = parseInt(btn.dataset.size);
-      chunkIndex = 0;
-      if (masterEmails.length > 0) loadChunk();
+      $('xChunkCustomRow').style.display = 'none';
+      xChunkSize = parseInt(btn.dataset.size);
+      xChunkIndex = 0;
+      if (xMasterEmails.length > 0) xLoadChunk();
     };
   });
 
-  $('chunkCustomSize').addEventListener('change', () => {
-    const val = parseInt($('chunkCustomSize').value);
+  $('xChunkCustomSize').addEventListener('change', () => {
+    const val = parseInt($('xChunkCustomSize').value);
     if (val > 0) {
-      chunkSize = val;
-      chunkIndex = 0;
-      if (masterEmails.length > 0) loadChunk();
+      xChunkSize = val;
+      xChunkIndex = 0;
+      if (xMasterEmails.length > 0) xLoadChunk();
     }
   });
 
@@ -1003,22 +1316,21 @@
     btn.onclick = () => {
       document.querySelectorAll('.chunk-order-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      masterMode = btn.dataset.order;
+      xMasterMode = btn.dataset.order;
     };
   });
 
-  // ---- Extract ----
-  $('extractBtn').onclick = async () => {
-    const status = $('extractStatus');
+  $('xExtractBtn').onclick = async () => {
+    const status = $('xExtractStatus');
     status.className = 'status';
     status.textContent = 'Extracting...';
 
     try {
       let allText = '';
 
-      for (const entry of selectedFiles) {
+      for (const entry of xSelectedFiles) {
         try {
-          const text = await readFile(entry.file);
+          const text = await xReadFile(entry.file);
           allText += '\n' + text;
         } catch (err) {
           console.warn('Failed to read', entry.name, err);
@@ -1027,16 +1339,17 @@
         }
       }
 
-      allText += '\n' + $('textInput').value;
+      allText += '\n' + $('xTextInput').value;
 
       let emails = extractFromText(allText);
 
-      const filter = $('filterInput').value.trim().toLowerCase();
+      const filter = $('xFilterInput').value.trim().toLowerCase();
       if (filter) {
-        emails = emails.filter(e => e.toLowerCase().endsWith('@' + filter) || e.toLowerCase().includes('@' + filter));
+        emails = emails.filter(e =>
+          e.toLowerCase().endsWith('@' + filter) || e.toLowerCase().includes('@' + filter));
       }
 
-      if ($('uniqueChk').checked) {
+      if ($('xUniqueChk').checked) {
         const seen = new Set();
         emails = emails.filter(e => {
           const lower = e.toLowerCase();
@@ -1046,122 +1359,127 @@
         });
       }
 
-      if ($('sortChk').checked) {
+      if ($('xSortChk').checked) {
         emails.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-        masterEmails = emails;
-      } else if (masterMode === 'shuffled') {
-        masterEmails = shuffleArray(emails);
+        xMasterEmails = emails;
+      } else if (xMasterMode === 'shuffled') {
+        xMasterEmails = shuffleArray(emails);
       } else {
-        masterEmails = emails;
+        xMasterEmails = emails;
       }
 
-      chunkIndex = 0;
+      xChunkIndex = 0;
 
-      if (masterEmails.length === 0) {
-        extractedEmails = [];
-        gmailEmails = [];
-        otherEmails = [];
-        mixedEmails = [];
-        leftoverEmails = [];
-        currentMixRatio = null;
-        currentMixBatchSize = 0;
-        renderAll();
+      if (xMasterEmails.length === 0) {
+        xExtractedEmails = [];
+        xGmailEmails = [];
+        xOtherEmails = [];
+        xMixedEmails = [];
+        xLeftoverEmails = [];
+        xCurrentMixRatio = null;
+        xRenderAll();
         status.className = 'status error';
         status.textContent = 'No valid emails found.';
         return;
       }
 
-      loadChunk();
+      xLoadChunk();
 
-      const totalChunks = Math.ceil(masterEmails.length / chunkSize);
       status.className = 'status success';
-      status.textContent = `Extracted ${masterEmails.length.toLocaleString()} email(s). Showing chunk 1 of ${totalChunks} (${extractedEmails.length.toLocaleString()} emails).`;
+      if (currentMode === 'simple') {
+        status.textContent = `Extracted ${xMasterEmails.length.toLocaleString()} email(s).`;
+      } else {
+        const totalChunks = Math.ceil(xMasterEmails.length / xChunkSize);
+        status.textContent = `Extracted ${xMasterEmails.length.toLocaleString()} email(s). Showing chunk 1 of ${totalChunks} (${xExtractedEmails.length.toLocaleString()} emails).`;
+      }
 
-      $('resultDetails').open = true;
+      $('xResultDetails').open = true;
     } catch (err) {
       status.className = 'status error';
       status.textContent = 'Error: ' + err.message;
     }
   };
 
-  // ---- Chunk loading ----
-  function loadChunk() {
-    const start = chunkIndex * chunkSize;
-    const end = start + chunkSize;
-    extractedEmails = masterEmails.slice(start, end);
+  function xLoadChunk() {
+    if (currentMode === 'simple') {
+      xExtractedEmails = xMasterEmails.slice();
+    } else {
+      const start = xChunkIndex * xChunkSize;
+      const end = start + xChunkSize;
+      xExtractedEmails = xMasterEmails.slice(start, end);
+    }
 
-    const split = splitEmails(extractedEmails);
-    gmailEmails = split.gmail;
-    otherEmails = split.other;
+    const split = splitEmails(xExtractedEmails);
+    xGmailEmails = split.gmail;
+    xOtherEmails = split.other;
 
-    mixedEmails = [];
-    leftoverEmails = [];
-    currentMixRatio = null;
-    currentMixBatchSize = 0;
+    xMixedEmails = [];
+    xLeftoverEmails = [];
+    xCurrentMixRatio = null;
+    xCurrentMixBatchSize = 0;
 
-    updateChunkNav();
-    renderAll();
+    xUpdateChunkNav();
+    xRenderAll();
   }
 
-  function updateChunkNav() {
-    if (masterEmails.length === 0) {
-      $('chunkNav').classList.remove('show');
+  function xUpdateChunkNav() {
+    if (xMasterEmails.length === 0 || currentMode === 'simple') {
+      $('xChunkNav').classList.remove('show');
       return;
     }
-    $('chunkNav').classList.add('show');
+    $('xChunkNav').classList.add('show');
 
-    const start = chunkIndex * chunkSize + 1;
-    const end = Math.min((chunkIndex + 1) * chunkSize, masterEmails.length);
-    const total = masterEmails.length;
-    const totalChunks = Math.ceil(total / chunkSize);
+    const start = xChunkIndex * xChunkSize + 1;
+    const end = Math.min((xChunkIndex + 1) * xChunkSize, xMasterEmails.length);
+    const total = xMasterEmails.length;
+    const totalChunks = Math.ceil(total / xChunkSize);
 
-    $('chunkNavInfo').innerHTML = `
+    $('xChunkNavInfo').innerHTML = `
       Viewing #${start.toLocaleString()}–#${end.toLocaleString()}
-      <span>of ${total.toLocaleString()} · chunk ${chunkIndex + 1} of ${totalChunks}</span>
+      <span>of ${total.toLocaleString()} · chunk ${xChunkIndex + 1} of ${totalChunks}</span>
     `;
 
-    $('prevChunkBtn').disabled = chunkIndex === 0;
-    $('nextChunkBtn').disabled = chunkIndex >= totalChunks - 1;
+    $('xPrevChunkBtn').disabled = xChunkIndex === 0;
+    $('xNextChunkBtn').disabled = xChunkIndex >= totalChunks - 1;
   }
 
-  $('prevChunkBtn').onclick = () => {
-    if (chunkIndex > 0) {
-      chunkIndex--;
-      loadChunk();
-      $('chunkNav').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  $('xPrevChunkBtn').onclick = () => {
+    if (xChunkIndex > 0) {
+      xChunkIndex--;
+      xLoadChunk();
+      $('xChunkNav').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
-  $('nextChunkBtn').onclick = () => {
-    const totalChunks = Math.ceil(masterEmails.length / chunkSize);
-    if (chunkIndex < totalChunks - 1) {
-      chunkIndex++;
-      loadChunk();
-      $('chunkNav').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  $('xNextChunkBtn').onclick = () => {
+    const totalChunks = Math.ceil(xMasterEmails.length / xChunkSize);
+    if (xChunkIndex < totalChunks - 1) {
+      xChunkIndex++;
+      xLoadChunk();
+      $('xChunkNav').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
-  // ---- Render everything ----
-  function renderAll() {
-    renderResults();
-    renderBatches();
-    renderCategories();
-    renderMix();
+  function xRenderAll() {
+    xRenderResults();
+    xRenderBatches();
+    xRenderCategories();
+    xRenderMix();
   }
 
-  function renderResults() {
-    const list = $('resultList');
+  function xRenderResults() {
+    const list = $('xResultList');
     list.innerHTML = '';
-    $('resultCount').textContent = `(${extractedEmails.length})`;
-    $('fullListCount').textContent = `(${extractedEmails.length})`;
+    $('xResultCount').textContent = `(${xExtractedEmails.length})`;
+    $('xFullListCount').textContent = `(${xExtractedEmails.length})`;
 
-    if (extractedEmails.length === 0) {
-      $('resultEmpty').style.display = 'block';
+    if (xExtractedEmails.length === 0) {
+      $('xResultEmpty').style.display = 'block';
       return;
     }
-    $('resultEmpty').style.display = 'none';
+    $('xResultEmpty').style.display = 'none';
 
-    extractedEmails.forEach((email, i) => {
+    xExtractedEmails.forEach((email, i) => {
       const isG = isGmail(email);
       const div = document.createElement('div');
       div.className = 'item';
@@ -1173,15 +1491,15 @@
     });
   }
 
-  function renderCategories() {
-    $('gmailCount').textContent = `(${gmailEmails.length})`;
-    const gl = $('gmailList');
+  function xRenderCategories() {
+    $('xGmailCount').textContent = `(${xGmailEmails.length})`;
+    const gl = $('xGmailList');
     gl.innerHTML = '';
-    if (gmailEmails.length === 0) {
-      $('gmailEmpty').style.display = 'block';
+    if (xGmailEmails.length === 0) {
+      $('xGmailEmpty').style.display = 'block';
     } else {
-      $('gmailEmpty').style.display = 'none';
-      gmailEmails.forEach((email, i) => {
+      $('xGmailEmpty').style.display = 'none';
+      xGmailEmails.forEach((email, i) => {
         const div = document.createElement('div');
         div.className = 'item';
         div.innerHTML = `
@@ -1192,14 +1510,14 @@
       });
     }
 
-    $('otherCount').textContent = `(${otherEmails.length})`;
-    const ol = $('otherList');
+    $('xOtherCount').textContent = `(${xOtherEmails.length})`;
+    const ol = $('xOtherList');
     ol.innerHTML = '';
-    if (otherEmails.length === 0) {
-      $('otherEmpty').style.display = 'block';
+    if (xOtherEmails.length === 0) {
+      $('xOtherEmpty').style.display = 'block';
     } else {
-      $('otherEmpty').style.display = 'none';
-      otherEmails.forEach((email, i) => {
+      $('xOtherEmpty').style.display = 'none';
+      xOtherEmails.forEach((email, i) => {
         const div = document.createElement('div');
         div.className = 'item';
         div.innerHTML = `
@@ -1211,12 +1529,9 @@
     }
   }
 
-  // ---- Batch rendering (reusable) ----
-  function buildBatchUI(emails, batchSize, container, summaryEl, variant) {
-    // variant: '' | 'amber' | 'grey'
+  function xBuildBatchUI(emails, batchSize, container, summaryEl, variant, withSend) {
     container.innerHTML = '';
     if (summaryEl) summaryEl.textContent = '';
-
     if (batchSize <= 0 || emails.length === 0) return;
 
     const total = emails.length;
@@ -1232,14 +1547,27 @@
     batches.forEach((batch, idx) => {
       const start = idx * batchSize + 1;
       const end = start + batch.length - 1;
+      const pushed = withSend && isBatchPushed(batch);
+
       const div = document.createElement('div');
-      div.className = 'batch-group' + (variant ? ' ' + variant : '');
+      div.className = 'batch-group' + (variant ? ' ' + variant : '') + (pushed ? ' pushed' : '');
+
+      let sendBtnHTML = '';
+      if (withSend) {
+        if (pushed) {
+          sendBtnHTML = `<button class="pushed-badge" data-unmark-batch="${idx}" title="Click to unmark">✓ SENT · Undo</button>`;
+        } else {
+          sendBtnHTML = `<button class="btn-mini send" data-send-batch="${idx}">Send →</button>`;
+        }
+      }
+
       div.innerHTML = `
         <div class="batch-group-head">
           <span class="batch-group-title">
             Batch ${idx + 1} <span>(#${start} – #${end} · ${batch.length} emails)</span>
           </span>
           <div class="batch-group-actions">
+            ${sendBtnHTML}
             <button class="btn-mini ${variant}" data-copy-batch="${idx}">Copy</button>
             <button class="btn-mini ${variant}" data-download-batch="${idx}">Download</button>
           </div>
@@ -1273,78 +1601,85 @@
         downloadFile(batches[idx].join('\n'), `batch-${idx + 1}.txt`, 'text/plain');
       };
     });
+
+    if (withSend) {
+      container.querySelectorAll('[data-send-batch]').forEach(btn => {
+        btn.onclick = () => {
+          const idx = parseInt(btn.dataset.sendBatch);
+          sendToSendTab(batches[idx]);
+        };
+      });
+
+      container.querySelectorAll('[data-unmark-batch]').forEach(btn => {
+        btn.onclick = () => {
+          const idx = parseInt(btn.dataset.unmarkBatch);
+          unmarkBatchPushed(batches[idx]);
+          if (container === $('xBatchList')) xRenderBatches();
+          else if (container === $('xMixBatchList')) xRenderMixBatches();
+        };
+      });
+    }
   }
 
-  function renderBatches() {
-    buildBatchUI(extractedEmails, currentBatchSize, $('batchList'), $('batchSummary'), '');
+  function xRenderBatches() {
+    xBuildBatchUI(xExtractedEmails, xCurrentBatchSize, $('xBatchList'), $('xBatchSummary'), '', true);
   }
 
-  function renderMixBatches() {
-    buildBatchUI(mixedEmails.map(m => m.email), currentMixBatchSize, $('mixBatchList'), $('mixBatchSummary'), 'amber');
+  function xRenderMixBatches() {
+    xBuildBatchUI(xMixedEmails.map(m => m.email), xCurrentMixBatchSize, $('xMixBatchList'), $('xMixBatchSummary'), 'amber', true);
   }
 
-  function renderLeftoverBatches() {
-    buildBatchUI(leftoverEmails.map(m => m.email), currentMixBatchSize, $('mixLeftoverList'), null, 'grey');
+  function xRenderLeftoverBatches() {
+    xBuildBatchUI(xLeftoverEmails.map(m => m.email), xCurrentMixBatchSize, $('xMixLeftoverList'), null, 'grey', false);
   }
 
-  // ---- Main batch size controls ----
   document.querySelectorAll('.batch-btn:not(.mix-batch-btn)').forEach(btn => {
     btn.onclick = () => {
       const size = btn.dataset.size;
       document.querySelectorAll('.batch-btn:not(.mix-batch-btn)').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-
       if (size === 'custom') {
-        $('batchCustom').classList.add('show');
+        $('xBatchCustom').classList.add('show');
         return;
       }
-      $('batchCustom').classList.remove('show');
-      currentBatchSize = parseInt(size);
-      renderBatches();
+      $('xBatchCustom').classList.remove('show');
+      xCurrentBatchSize = parseInt(size);
+      xRenderBatches();
     };
   });
 
-  $('applyCustomBtn').onclick = () => {
-    const val = parseInt($('customSize').value);
-    if (!val || val < 1) {
-      alert('Please enter a valid number.');
-      return;
-    }
-    currentBatchSize = val;
-    renderBatches();
+  $('xApplyCustomBtn').onclick = () => {
+    const val = parseInt($('xCustomSize').value);
+    if (!val || val < 1) { alert('Please enter a valid number.'); return; }
+    xCurrentBatchSize = val;
+    xRenderBatches();
   };
 
-  // ---- Mix batch size controls ----
   document.querySelectorAll('.mix-batch-btn').forEach(btn => {
     btn.onclick = () => {
       const size = btn.dataset.size;
       document.querySelectorAll('.mix-batch-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-
       if (size === 'custom') {
-        $('mixBatchCustom').classList.add('show');
+        $('xMixBatchCustom').classList.add('show');
         return;
       }
-      $('mixBatchCustom').classList.remove('show');
-      currentMixBatchSize = parseInt(size);
-      renderMixBatches();
-      renderLeftoverBatches();
+      $('xMixBatchCustom').classList.remove('show');
+      xCurrentMixBatchSize = parseInt(size);
+      xRenderMixBatches();
+      xRenderLeftoverBatches();
     };
   });
 
-  $('applyMixCustomBtn').onclick = () => {
-    const val = parseInt($('mixCustomSize').value);
-    if (!val || val < 1) {
-      alert('Please enter a valid number.');
-      return;
-    }
-    currentMixBatchSize = val;
-    renderMixBatches();
-    renderLeftoverBatches();
+  $('xApplyMixCustomBtn').onclick = () => {
+    const val = parseInt($('xMixCustomSize').value);
+    if (!val || val < 1) { alert('Please enter a valid number.'); return; }
+    xCurrentMixBatchSize = val;
+    xRenderMixBatches();
+    xRenderLeftoverBatches();
   };
 
-  // ---- Mix Ratio ----
-  function parseRatio(str) {
+  function xParseRatio(str) {
     const m = str.trim().match(/^(\d+)\s*[:/]\s*(\d+)$/);
     if (!m) return null;
     const g = parseInt(m[1]);
@@ -1353,7 +1688,7 @@
     return { g, o };
   }
 
-  function buildMix(gmailArr, otherArr, ratio) {
+  function xBuildMix(gmailArr, otherArr, ratio) {
     const g = shuffleArray(gmailArr);
     const o = shuffleArray(otherArr);
     const maxGmailRounds = Math.floor(g.length / ratio.g);
@@ -1364,44 +1699,36 @@
     let gi = 0, oi = 0;
 
     for (let r = 0; r < rounds; r++) {
-      for (let k = 0; k < ratio.g; k++) {
-        mixed.push({ email: g[gi++], type: 'gmail' });
-      }
-      for (let k = 0; k < ratio.o; k++) {
-        mixed.push({ email: o[oi++], type: 'other' });
-      }
+      for (let k = 0; k < ratio.g; k++) mixed.push({ email: g[gi++], type: 'gmail' });
+      for (let k = 0; k < ratio.o; k++) mixed.push({ email: o[oi++], type: 'other' });
     }
 
-    // Leftover emails
     const leftoverGmail = g.slice(gi).map(e => ({ email: e, type: 'gmail' }));
     const leftoverOther = o.slice(oi).map(e => ({ email: e, type: 'other' }));
     const leftover = leftoverGmail.concat(leftoverOther);
 
     return {
-      mixed,
-      leftover,
-      usedGmail: gi,
-      usedOther: oi,
-      unusedGmail: g.length - gi,
-      unusedOther: o.length - oi,
+      mixed, leftover,
+      usedGmail: gi, usedOther: oi,
+      unusedGmail: g.length - gi, unusedOther: o.length - oi,
       rounds
     };
   }
 
-  function renderMix() {
-    const statsBox = $('mixStats');
-    const actionRow = $('mixActionRow');
-    const list = $('mixList');
-    const batchSection = $('mixBatchSection');
-    const leftoverSection = $('mixLeftoverSection');
-    const listDetails = $('mixListDetails');
-    const leftoverDetails = $('mixLeftoverDetails');
-    const leftoverFullList = $('mixLeftoverFullList');
+  function xRenderMix() {
+    const statsBox = $('xMixStats');
+    const actionRow = $('xMixActionRow');
+    const list = $('xMixList');
+    const batchSection = $('xMixBatchSection');
+    const leftoverSection = $('xMixLeftoverSection');
+    const listDetails = $('xMixListDetails');
+    const leftoverDetails = $('xMixLeftoverDetails');
+    const leftoverFullList = $('xMixLeftoverFullList');
 
     list.innerHTML = '';
     leftoverFullList.innerHTML = '';
 
-    if (!currentMixRatio || mixedEmails.length === 0) {
+    if (!xCurrentMixRatio || xMixedEmails.length === 0) {
       statsBox.style.display = 'none';
       actionRow.style.display = 'none';
       batchSection.style.display = 'none';
@@ -1416,17 +1743,16 @@
     batchSection.style.display = 'block';
     listDetails.style.display = 'block';
 
-    const r = currentMixRatio;
+    const r = xCurrentMixRatio;
     const info = r.info;
     statsBox.innerHTML = `
-      <strong>Ratio ${r.g}:${r.o}</strong> — ${mixedEmails.length} total emails<br>
+      <strong>Ratio ${r.g}:${r.o}</strong> — ${xMixedEmails.length} total emails<br>
       ✓ Used: <strong>${info.usedGmail}</strong> Gmail + <strong>${info.usedOther}</strong> Other<br>
       ⏳ Leftover: ${info.unusedGmail} Gmail, ${info.unusedOther} Other
     `;
 
-    // Full mixed list inside dropdown
-    $('mixListCount').textContent = `(${mixedEmails.length})`;
-    mixedEmails.forEach((item, i) => {
+    $('xMixListCount').textContent = `(${xMixedEmails.length})`;
+    xMixedEmails.forEach((item, i) => {
       const div = document.createElement('div');
       div.className = 'item';
       div.innerHTML = `
@@ -1436,16 +1762,13 @@
       list.appendChild(div);
     });
 
-    // Mixed batches
-    renderMixBatches();
+    xRenderMixBatches();
 
-    // Leftover section
-    if (leftoverEmails.length > 0) {
+    if (xLeftoverEmails.length > 0) {
       leftoverSection.style.display = 'block';
       leftoverDetails.style.display = 'block';
-      $('mixLeftoverCount').textContent = `(${leftoverEmails.length})`;
-
-      leftoverEmails.forEach((item, i) => {
+      $('xMixLeftoverCount').textContent = `(${xLeftoverEmails.length})`;
+      xLeftoverEmails.forEach((item, i) => {
         const div = document.createElement('div');
         div.className = 'item';
         div.innerHTML = `
@@ -1454,29 +1777,27 @@
         `;
         leftoverFullList.appendChild(div);
       });
-
-      // Batches for leftover (same batch size as mix)
-      renderLeftoverBatches();
+      xRenderLeftoverBatches();
     } else {
       leftoverSection.style.display = 'none';
       leftoverDetails.style.display = 'none';
     }
   }
 
-  function applyRatio(g, o) {
-    if (gmailEmails.length === 0 || otherEmails.length === 0) {
+  function xApplyRatio(g, o) {
+    if (xGmailEmails.length === 0 || xOtherEmails.length === 0) {
       alert('You need at least one Gmail and one Other email to mix.');
       return;
     }
-    const result = buildMix(gmailEmails, otherEmails, { g, o });
+    const result = xBuildMix(xGmailEmails, xOtherEmails, { g, o });
     if (result.mixed.length === 0) {
       alert(`Can't make any complete ${g}:${o} rounds with your current chunk.`);
       return;
     }
-    mixedEmails = result.mixed;
-    leftoverEmails = result.leftover;
-    currentMixRatio = { g, o, info: result };
-    renderMix();
+    xMixedEmails = result.mixed;
+    xLeftoverEmails = result.leftover;
+    xCurrentMixRatio = { g, o, info: result };
+    xRenderMix();
   }
 
   document.querySelectorAll('.mix-btn').forEach(btn => {
@@ -1485,162 +1806,366 @@
       btn.classList.add('active');
       const g = parseInt(btn.dataset.g);
       const o = parseInt(btn.dataset.o);
-      $('mixInput').value = `${g}:${o}`;
-      applyRatio(g, o);
+      $('xMixInput').value = `${g}:${o}`;
+      xApplyRatio(g, o);
     };
   });
 
-  $('applyMixBtn').onclick = () => {
-    const parsed = parseRatio($('mixInput').value);
-    if (!parsed) {
-      alert('Invalid format. Use something like 2:1 or 200:50.');
-      return;
-    }
+  $('xApplyMixBtn').onclick = () => {
+    const parsed = xParseRatio($('xMixInput').value);
+    if (!parsed) { alert('Invalid format. Use something like 2:1 or 200:50.'); return; }
     document.querySelectorAll('.mix-btn').forEach(b => b.classList.remove('active'));
-    applyRatio(parsed.g, parsed.o);
+    xApplyRatio(parsed.g, parsed.o);
   };
 
-  $('copyMixBtn').onclick = async () => {
-    if (mixedEmails.length === 0) return;
+  $('xReshuffleBtn').onclick = () => {
+    if (xExtractedEmails.length === 0) return;
+    xExtractedEmails = shuffleArray(xExtractedEmails);
+    const split = splitEmails(xExtractedEmails);
+    xGmailEmails = split.gmail;
+    xOtherEmails = split.other;
+    xMixedEmails = [];
+    xLeftoverEmails = [];
+    xCurrentMixRatio = null;
+    xCurrentMixBatchSize = 0;
+    xRenderAll();
+  };
+
+  $('xCopyChunkBtn').onclick = async () => {
+    if (xExtractedEmails.length === 0) return;
     try {
-      await navigator.clipboard.writeText(mixedEmails.map(m => m.email).join('\n'));
-      const btn = $('copyMixBtn');
+      await navigator.clipboard.writeText(xExtractedEmails.join('\n'));
+      const btn = $('xCopyChunkBtn');
       const old = btn.textContent;
       btn.textContent = '✓ Copied!';
       setTimeout(() => btn.textContent = old, 1500);
     } catch (e) { alert('Copy failed.'); }
   };
 
-  $('downloadMixBtn').onclick = () => {
-    if (mixedEmails.length === 0) return;
-    downloadFile(mixedEmails.map(m => m.email).join('\n'), 'mixed.txt', 'text/plain');
-  };
-
-  // ---- Category copy/download ----
-  $('copyGmailBtn').onclick = async () => {
-    if (gmailEmails.length === 0) return;
+  $('xCopyGmailBtn').onclick = async () => {
+    if (xGmailEmails.length === 0) return;
     try {
-      await navigator.clipboard.writeText(gmailEmails.join('\n'));
-      const btn = $('copyGmailBtn');
+      await navigator.clipboard.writeText(xGmailEmails.join('\n'));
+      const btn = $('xCopyGmailBtn');
       const old = btn.textContent;
       btn.textContent = '✓ Copied!';
       setTimeout(() => btn.textContent = old, 1500);
     } catch (e) { alert('Copy failed.'); }
   };
 
-  $('downloadGmailBtn').onclick = () => {
-    if (gmailEmails.length === 0) return;
-    downloadFile(gmailEmails.join('\n'), 'gmail-personal.txt', 'text/plain');
-  };
-
-  $('copyOtherBtn').onclick = async () => {
-    if (otherEmails.length === 0) return;
+  $('xCopyOtherBtn').onclick = async () => {
+    if (xOtherEmails.length === 0) return;
     try {
-      await navigator.clipboard.writeText(otherEmails.join('\n'));
-      const btn = $('copyOtherBtn');
+      await navigator.clipboard.writeText(xOtherEmails.join('\n'));
+      const btn = $('xCopyOtherBtn');
       const old = btn.textContent;
       btn.textContent = '✓ Copied!';
       setTimeout(() => btn.textContent = old, 1500);
     } catch (e) { alert('Copy failed.'); }
   };
 
-  $('downloadOtherBtn').onclick = () => {
-    if (otherEmails.length === 0) return;
-    downloadFile(otherEmails.join('\n'), 'other-work.txt', 'text/plain');
-  };
-
-  // ---- Reshuffle ----
-  $('reshuffleBtn').onclick = () => {
-    if (extractedEmails.length === 0) return;
-    extractedEmails = shuffleArray(extractedEmails);
-    const split = splitEmails(extractedEmails);
-    gmailEmails = split.gmail;
-    otherEmails = split.other;
-    mixedEmails = [];
-    leftoverEmails = [];
-    currentMixRatio = null;
-    currentMixBatchSize = 0;
-    renderAll();
-  };
-
-  $('copyBtn').onclick = async () => {
-    if (extractedEmails.length === 0) return;
+  $('xCopyMixBtn').onclick = async () => {
+    if (xMixedEmails.length === 0) return;
     try {
-      await navigator.clipboard.writeText(extractedEmails.join('\n'));
-      const btn = $('copyBtn');
+      await navigator.clipboard.writeText(xMixedEmails.map(m => m.email).join('\n'));
+      const btn = $('xCopyMixBtn');
       const old = btn.textContent;
       btn.textContent = '✓ Copied!';
       setTimeout(() => btn.textContent = old, 1500);
-    } catch (e) {
-      alert('Copy failed. Your browser may block clipboard access on file:// pages.');
-    }
+    } catch (e) { alert('Copy failed.'); }
   };
 
-  $('downloadTxtBtn').onclick = () => {
-    if (extractedEmails.length === 0) return;
-    downloadFile(extractedEmails.join('\n'), 'emails.txt', 'text/plain');
-  };
+  $('xSendChunkBtn').onclick = () => sendToSendTab(xExtractedEmails);
+  $('xSendChunkFromResultsBtn').onclick = () => sendToSendTab(xExtractedEmails);
+  $('xSendGmailBtn').onclick = () => sendToSendTab(xGmailEmails);
+  $('xSendOtherBtn').onclick = () => sendToSendTab(xOtherEmails);
+  $('xSendMixBtn').onclick = () => sendToSendTab(xMixedEmails.map(m => m.email));
 
-  $('downloadCsvBtn').onclick = () => {
-    if (extractedEmails.length === 0) return;
-    const csv = 'email\n' + extractedEmails.map(e => `"${e}"`).join('\n');
-    downloadFile(csv, 'emails.csv', 'text/csv');
-  };
-
-  function downloadFile(content, filename, mime) {
-    const blob = new Blob([content], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  // ---- Clear ----
-  $('clearBtn').onclick = () => {
-    if (!confirm("Clear all files, text, and results?")) return;
-    selectedFiles = [];
-    masterEmails = [];
-    extractedEmails = [];
-    gmailEmails = [];
-    otherEmails = [];
-    mixedEmails = [];
-    leftoverEmails = [];
-    currentBatchSize = 0;
-    currentMixBatchSize = 0;
-    currentMixRatio = null;
-    chunkIndex = 0;
-    $('textInput').value = '';
-    $('filterInput').value = '';
-    $('fileInput').value = '';
-    $('customSize').value = '';
-    $('mixCustomSize').value = '';
-    $('chunkCustomSize').value = '';
-    $('mixInput').value = '';
-    $('extractStatus').textContent = '';
-    $('extractStatus').className = 'status';
+  $('xClearBtn').onclick = () => {
+    if (!confirm('Clear the Extract tab? Files, text, and results will be lost. All pushed marks will also be reset.')) return;
+    xSelectedFiles = [];
+    xMasterEmails = [];
+    xExtractedEmails = [];
+    xGmailEmails = [];
+    xOtherEmails = [];
+    xMixedEmails = [];
+    xLeftoverEmails = [];
+    xCurrentBatchSize = 0;
+    xCurrentMixBatchSize = 0;
+    xCurrentMixRatio = null;
+    xChunkIndex = 0;
+    xPushedEmails = new Set();
+    store.remove('swiftsend_pushedEmails');
+    $('xTextInput').value = '';
+    $('xFilterInput').value = '';
+    $('xFileInput').value = '';
+    $('xCustomSize').value = '';
+    $('xMixCustomSize').value = '';
+    $('xChunkCustomSize').value = '';
+    $('xMixInput').value = '';
+    $('xExtractStatus').textContent = '';
+    $('xExtractStatus').className = 'status';
     document.querySelectorAll('.batch-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.mix-btn').forEach(b => b.classList.remove('active'));
-    $('batchCustom').classList.remove('show');
-    $('mixBatchCustom').classList.remove('show');
-    $('chunkCustomRow').style.display = 'none';
-    renderFileList();
-    renderAll();
-    updateChunkNav();
-    $('resultDetails').open = false;
-    $('fullListDetails').open = false;
-    $('gmailDetails').open = false;
-    $('otherDetails').open = false;
-    $('mixDetails').open = false;
-    $('mixListDetails').open = false;
-    $('mixLeftoverDetails').open = false;
+    $('xBatchCustom').classList.remove('show');
+    $('xMixBatchCustom').classList.remove('show');
+    $('xChunkCustomRow').style.display = 'none';
+    xRenderFileList();
+    xRenderAll();
+    xUpdateChunkNav();
+    $('xResultDetails').open = false;
+    $('xFullListDetails').open = false;
+    $('xGmailDetails').open = false;
+    $('xOtherDetails').open = false;
+    $('xMixDetails').open = false;
+    $('xMixListDetails').open = false;
+    $('xMixLeftoverDetails').open = false;
   };
 
-  renderFileList();
-  renderAll();
+  /* ============================================
+     SEND TAB
+     ============================================ */
+  let sRecipients = store.get('swiftsend_recipients', []);
+  let sSentLog = store.get('swiftsend_sentLog', []);
+
+  $('sSubject').value = store.getRaw('swiftsend_subject', '');
+  $('sBody').value = store.getRaw('swiftsend_body', '');
+  $('sBulkEmails').value = store.getRaw('swiftsend_bulkText', '');
+
+  $('sSubject').addEventListener('input', () => {
+    store.setRaw('swiftsend_subject', $('sSubject').value);
+  });
+  $('sBody').addEventListener('input', () => {
+    store.setRaw('swiftsend_body', $('sBody').value);
+  });
+  $('sBulkEmails').addEventListener('input', () => {
+    store.setRaw('swiftsend_bulkText', $('sBulkEmails').value);
+  });
+
+  function sPruneSentLog() {
+    const cutoff = Date.now() - (24 * 60 * 60 * 1000);
+    sSentLog = sSentLog.filter(ts => ts > cutoff);
+    store.set('swiftsend_sentLog', sSentLog);
+  }
+
+  $('sAddBtn').onclick = () => {
+    const rawText = $('sBulkEmails').value;
+    const foundEmails = extractFromText(rawText);
+
+    if (foundEmails.length === 0) {
+      $('sAddStatus').textContent = 'No valid emails found. Please check your list.';
+      return;
+    }
+
+    let addedCount = 0;
+    foundEmails.forEach(email => {
+      const exists = sRecipients.some(r => r.email.toLowerCase() === email.toLowerCase());
+      if (!exists) {
+        sRecipients.push({ email: email, sent: false });
+        addedCount++;
+      }
+    });
+
+    $('sAddStatus').textContent = `Added ${addedCount} new email(s).`;
+    store.set('swiftsend_recipients', sRecipients);
+    sRender();
+  };
+
+  function sRender() {
+    sPruneSentLog();
+    $('sAnalyticsCount').textContent = sSentLog.length;
+
+    const pendingCount = sRecipients.filter(r => !r.sent).length;
+    const badge = $('tabSendBadge');
+    if (pendingCount > 0) {
+      badge.style.display = 'inline-block';
+      badge.textContent = pendingCount > 999 ? '999+' : pendingCount;
+    } else {
+      badge.style.display = 'none';
+    }
+
+    const pendingList = $('sPendingList');
+    pendingList.innerHTML = '';
+    const pendingItems = sRecipients.filter(r => !r.sent);
+    $('sPendingCount').textContent = `(${pendingItems.length})`;
+
+    if (pendingItems.length === 0) {
+      $('sPendingStatus').style.display = 'block';
+      $('sPendingStatus').textContent = sRecipients.length === 0
+        ? 'No emails added yet.'
+        : '🎉 All emails have been sent!';
+    } else {
+      $('sPendingStatus').style.display = 'none';
+      pendingItems.forEach(item => {
+        const realIndex = sRecipients.indexOf(item);
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <span class="num">${realIndex + 1}</span>
+          <a class="email-link" onclick="sSendOne(${realIndex})" title="Click to send">${item.email}</a>
+        `;
+        pendingList.appendChild(div);
+      });
+    }
+
+    const allList = $('sAllList');
+    allList.innerHTML = '';
+    $('sAllCount').textContent = `(${sRecipients.length})`;
+
+    if (sRecipients.length === 0) {
+      $('sAllStatus').style.display = 'block';
+    } else {
+      $('sAllStatus').style.display = 'none';
+      sRecipients.forEach((item, index) => {
+        const linkClass = item.sent ? 'email-link sent' : 'email-link';
+        const numClass = item.sent ? 'num done' : 'num';
+        const title = item.sent ? 'Already sent — click to send again' : 'Click to send';
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <span class="${numClass}">${index + 1}</span>
+          <a class="${linkClass}" onclick="sSendOne(${index})" title="${title}">${item.email}</a>
+        `;
+        allList.appendChild(div);
+      });
+    }
+  }
+
+  window.sSendOne = (index) => {
+    const item = sRecipients[index];
+
+    const subject = $('sSubject').value.trim();
+    const body = $('sBody').value.trim();
+
+    if (!subject || !body) {
+      alert("Please open '2. Compose Email' and write a Subject and Message first.");
+      return;
+    }
+
+    const mailtoLink = `mailto:${item.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+
+    if (!item.sent) {
+      item.sent = true;
+      sSentLog.push(Date.now());
+      store.set('swiftsend_sentLog', sSentLog);
+      store.set('swiftsend_recipients', sRecipients);
+      sRender();
+    }
+  };
+
+  $('sTestBtn').onclick = () => {
+    const testEmail = $('sTestEmail').value.trim();
+    if (!testEmail || !testEmail.includes('@')) {
+      $('sTestStatus').textContent = 'Please enter a valid test email address.';
+      return;
+    }
+
+    const subject = $('sSubject').value.trim();
+    const body = $('sBody').value.trim();
+
+    if (!subject || !body) {
+      $('sTestStatus').textContent = 'Please write a Subject and Message first.';
+      return;
+    }
+
+    const mailtoLink = `mailto:${testEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+    $('sTestStatus').textContent = 'Test email opened in your mail app.';
+  };
+
+  $('sResetBtn').onclick = () => {
+    if (!confirm("Are you sure? This will delete all emails and reset the analytics. Cannot be undone.")) return;
+    sRecipients = [];
+    sSentLog = [];
+    store.remove('swiftsend_recipients');
+    store.remove('swiftsend_sentLog');
+    store.remove('swiftsend_subject');
+    store.remove('swiftsend_body');
+    store.remove('swiftsend_bulkText');
+    $('sSubject').value = '';
+    $('sBody').value = '';
+    $('sBulkEmails').value = '';
+    $('sTestEmail').value = '';
+    $('sAddStatus').textContent = '';
+    $('sTestStatus').textContent = '';
+    sRender();
+  };
+
+  /* ============================================
+     BRIDGE: Extract → Send
+     ============================================ */
+  function sendToSendTab(emails) {
+    if (!emails || emails.length === 0) {
+      showToast('Nothing to send — extract emails first.');
+      return;
+    }
+
+    const newText = emails.join('\n');
+    $('sBulkEmails').value = newText;
+    store.setRaw('swiftsend_bulkText', newText);
+
+    markBatchPushed(emails);
+
+    if (xCurrentBatchSize > 0) xRenderBatches();
+    if (xCurrentMixBatchSize > 0) xRenderMixBatches();
+
+    switchTab('send');
+
+    showToast(`✓ Loaded ${emails.length} email(s) — click "Generate List" to add them`);
+  }
+
+  /* ============================================
+     FLOATING SCROLL BUTTONS
+     ============================================ */
+  (function() {
+    const nav = document.getElementById('scrollNav');
+    const topBtn = document.getElementById('scrollTopBtn');
+    const bottomBtn = document.getElementById('scrollBottomBtn');
+
+    function updateScrollNav() {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight;
+      const winHeight = window.innerHeight;
+      const nearBottom = scrollY + winHeight >= docHeight - 100;
+
+      if (scrollY > 250) nav.classList.add('show');
+      else nav.classList.remove('show');
+
+      bottomBtn.style.opacity = nearBottom ? '0.3' : '1';
+      bottomBtn.style.pointerEvents = nearBottom ? 'none' : 'auto';
+
+      topBtn.style.opacity = scrollY < 20 ? '0.3' : '1';
+      topBtn.style.pointerEvents = scrollY < 20 ? 'none' : 'auto';
+    }
+
+    topBtn.onclick = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    bottomBtn.onclick = () => {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    };
+
+    window.addEventListener('scroll', updateScrollNav, { passive: true });
+    window.addEventListener('resize', updateScrollNav);
+
+    updateScrollNav();
+  })();
+
+  /* ============================================
+     INIT
+     ============================================ */
+  setMode(currentMode);
+  xRenderFileList();
+  xRenderAll();
+  sRender();
+
+  setInterval(() => {
+    if (document.getElementById('tab-send').classList.contains('active')) {
+      sRender();
+    }
+  }, 60 * 1000);
 </script>
 </body>
 </html>
