@@ -20,6 +20,11 @@
     --bg: #f0fdf4;
     --blue: #2563eb;
     --red: #dc2626;
+    --orange: #f97316;
+    --purple: #7c3aed;
+    --amber: #d97706;
+    --amber-dark: #92400e;
+    --amber-soft: #fef3c7;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -125,19 +130,9 @@
     border-color: var(--green);
     background: var(--green-soft);
   }
-  .dropzone-icon {
-    font-size: 28px;
-    margin-bottom: 8px;
-  }
-  .dropzone-text {
-    font-weight: 600;
-    color: var(--green-dark);
-  }
-  .dropzone-sub {
-    font-size: 13px;
-    color: var(--muted);
-    margin-top: 4px;
-  }
+  .dropzone-icon { font-size: 28px; margin-bottom: 8px; }
+  .dropzone-text { font-weight: 600; color: var(--green-dark); }
+  .dropzone-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
   .file-list { margin-top: 10px; }
   .file-item {
@@ -150,17 +145,8 @@
     margin-bottom: 6px;
     font-size: 14px;
   }
-  .file-item .name {
-    font-weight: 600;
-    color: var(--green-dark);
-    word-break: break-all;
-  }
-  .file-item .size {
-    color: var(--muted);
-    font-size: 12px;
-    margin-left: 10px;
-    flex-shrink: 0;
-  }
+  .file-item .name { font-weight: 600; color: var(--green-dark); word-break: break-all; }
+  .file-item .size { color: var(--muted); font-size: 12px; margin-left: 10px; flex-shrink: 0; }
 
   .options {
     display: flex;
@@ -182,10 +168,103 @@
     accent-color: var(--green);
     cursor: pointer;
   }
-  .option-hint {
-    font-size: 12px;
+  .option-hint { font-size: 12px; color: var(--muted); margin-left: 26px; }
+
+  .chunk-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 16px;
+    background: var(--green-soft);
+    border-radius: 12px;
+  }
+  .chunk-controls h3 { margin: 0 0 5px 0; }
+  .chunk-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .chunk-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--green-dark);
+    min-width: 80px;
+  }
+  .chip-btn {
+    border: 1px solid var(--green);
+    background: #fff;
+    color: var(--green-dark);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .chip-btn:hover { background: var(--green); color: #fff; }
+  .chip-btn.active { background: var(--green); color: #fff; }
+  #chunkCustomRow input {
+    width: 120px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .chunk-nav {
+    display: none;
+    background: #fff;
+    border: 2px solid var(--green);
+    border-radius: 16px;
+    padding: 20px 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(22, 101, 52, 0.1);
+    text-align: center;
+  }
+  .chunk-nav.show { display: block; }
+  .chunk-nav-label {
+    font-size: 13px;
     color: var(--muted);
-    margin-left: 26px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .chunk-nav-info {
+    font-size: 17px;
+    color: var(--green-dark);
+    font-weight: 700;
+    margin: 8px 0 15px 0;
+  }
+  .chunk-nav-info span {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 14px;
+    display: block;
+    margin-top: 3px;
+  }
+  .chunk-nav-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .chunk-nav-btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 11px 22px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(110deg, var(--green), var(--green-light));
+    color: #fff;
+    min-width: 110px;
+    font-size: 14px;
+  }
+  .chunk-nav-btn:hover:not(:disabled) {
+    background: linear-gradient(110deg, var(--green-dark), var(--green));
+  }
+  .chunk-nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
   }
 
   details {
@@ -216,16 +295,44 @@
     color: var(--muted);
     transition: transform 0.2s ease;
   }
-  details[open] summary::after { transform: rotate(180deg); }
-  .summary-count {
-    color: var(--muted);
-    font-weight: 400;
-    font-size: 16px;
-  }
+  details[open] > summary::after { transform: rotate(180deg); }
+  .summary-count { color: var(--muted); font-weight: 400; font-size: 16px; }
   .dropdown-body {
     padding: 0 25px 20px 25px;
     border-top: 1px solid var(--line);
   }
+
+  details.nested {
+    background: #fafffb;
+    border: 1px solid var(--green-soft);
+    border-radius: 12px;
+    margin: 15px 0 0 0;
+    box-shadow: none;
+  }
+  details.nested > summary {
+    padding: 14px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--green-dark);
+  }
+  details.nested > summary:hover { background: var(--green-soft); }
+  details.nested .dropdown-body {
+    padding: 0 18px 15px 18px;
+  }
+
+  details.nested.amber {
+    background: #fffbeb;
+    border-color: #fbbf24;
+  }
+  details.nested.amber > summary { color: var(--amber-dark); }
+  details.nested.amber > summary:hover { background: var(--amber-soft); }
+
+  details.nested.grey {
+    background: #f9fafb;
+    border-color: #d1d5db;
+  }
+  details.nested.grey > summary { color: #4b5563; }
+  details.nested.grey > summary:hover { background: #f3f4f6; }
 
   .list { margin-top: 10px; }
   .item {
@@ -249,6 +356,8 @@
     font-weight: 700;
     flex-shrink: 0;
   }
+  .num.gmail { background: var(--orange); color: #fff; }
+  .num.other { background: var(--purple); color: #fff; }
   .email-text {
     font-weight: 500;
     font-size: 14px;
@@ -256,22 +365,28 @@
     word-break: break-all;
   }
 
-  /* Batch section */
   .batch-section {
     background: var(--green-soft);
     border-radius: 12px;
     padding: 15px;
     margin: 15px 0;
   }
-  .batch-section h3 {
-    margin-bottom: 10px;
+  .batch-section.amber {
+    background: var(--amber-soft);
+    border: 1px solid #fbbf24;
   }
-  .batch-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
+  .batch-section.amber h3 { color: var(--amber-dark); }
+  .batch-section.amber .batch-summary { color: var(--amber-dark); }
+
+  /* Leftover style */
+  .batch-section.grey {
+    background: #f3f4f6;
+    border: 1px dashed #9ca3af;
   }
+  .batch-section.grey h3 { color: #4b5563; }
+  .batch-section.grey .batch-summary { color: #4b5563; }
+
+  .batch-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
   .batch-btn {
     border: 1px solid var(--green);
     background: #fff;
@@ -283,30 +398,23 @@
     font-weight: 600;
     cursor: pointer;
   }
-  .batch-btn:hover {
-    background: var(--green);
-    color: #fff;
+  .batch-btn:hover { background: var(--green); color: #fff; }
+  .batch-btn.active { background: var(--green); color: #fff; }
+  .batch-btn.amber {
+    border-color: var(--amber);
+    color: var(--amber-dark);
   }
-  .batch-btn.active {
-    background: var(--green);
-    color: #fff;
-  }
-  .batch-custom {
-    display: none;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 10px;
-  }
+  .batch-btn.amber:hover { background: var(--amber); color: #fff; }
+  .batch-btn.amber.active { background: var(--amber); color: #fff; }
+  .batch-custom { display: none; gap: 8px; align-items: center; margin-bottom: 10px; }
   .batch-custom.show { display: flex; }
-  .batch-custom input {
-    width: 120px;
-    padding: 8px 12px;
+  .batch-custom input { width: 120px; padding: 8px 12px; }
+  .batch-custom .btn { width: auto; margin-top: 0; padding: 8px 16px; font-size: 14px; }
+  .batch-custom .btn.amber {
+    background: linear-gradient(110deg, var(--amber), #f59e0b);
   }
-  .batch-custom .btn {
-    width: auto;
-    margin-top: 0;
-    padding: 8px 16px;
-    font-size: 14px;
+  .batch-custom .btn.amber:hover {
+    background: linear-gradient(110deg, var(--amber-dark), var(--amber));
   }
   .batch-summary {
     font-size: 13px;
@@ -322,6 +430,8 @@
     padding: 12px 14px;
     margin-bottom: 8px;
   }
+  .batch-group.amber { border-color: #fcd34d; }
+  .batch-group.grey { border-color: #d1d5db; }
   .batch-group-head {
     display: flex;
     justify-content: space-between;
@@ -329,20 +439,11 @@
     flex-wrap: wrap;
     gap: 8px;
   }
-  .batch-group-title {
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--green-dark);
-  }
-  .batch-group-title span {
-    font-weight: 400;
-    color: var(--muted);
-    margin-left: 6px;
-  }
-  .batch-group-actions {
-    display: flex;
-    gap: 6px;
-  }
+  .batch-group-title { font-weight: 700; font-size: 14px; color: var(--green-dark); }
+  .batch-group.amber .batch-group-title { color: var(--amber-dark); }
+  .batch-group.grey .batch-group-title { color: #4b5563; }
+  .batch-group-title span { font-weight: 400; color: var(--muted); margin-left: 6px; }
+  .batch-group-actions { display: flex; gap: 6px; }
   .btn-mini {
     border: 0;
     border-radius: 6px;
@@ -354,6 +455,117 @@
     color: var(--green-dark);
   }
   .btn-mini:hover { background: var(--green); color: #fff; }
+  .btn-mini.amber {
+    background: var(--amber-soft);
+    color: var(--amber-dark);
+  }
+  .btn-mini.amber:hover { background: var(--amber); color: #fff; }
+  .btn-mini.grey {
+    background: #e5e7eb;
+    color: #4b5563;
+  }
+  .btn-mini.grey:hover { background: #6b7280; color: #fff; }
+
+  .batch-preview {
+    width: 100%;
+    height: 60px;
+    min-height: 50px;
+    max-height: 500px;
+    margin-top: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: #fafffb;
+    color: var(--ink);
+    resize: vertical;
+    overflow: auto;
+    white-space: pre;
+  }
+  .batch-group.amber .batch-preview { background: #fffbeb; }
+  .batch-group.grey .batch-preview { background: #f9fafb; }
+  .batch-preview:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 2px var(--green-soft);
+  }
+  .batch-preview-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .cat-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+    margin-right: 8px;
+  }
+  .cat-dot.gmail { background: var(--orange); }
+  .cat-dot.other { background: var(--purple); }
+
+  .mix-section {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 10px;
+    border: 1px solid #fbbf24;
+  }
+  .mix-section h3 { color: var(--amber-dark); margin-bottom: 8px; }
+  .mix-section .status { color: var(--amber-dark); }
+  .mix-presets {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .mix-btn {
+    border: 1px solid var(--amber);
+    background: #fff;
+    color: var(--amber-dark);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .mix-btn:hover { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+  .mix-btn.active { background: var(--amber); color: #fff; border-color: var(--amber); }
+  .mix-input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .mix-input-row input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #fbbf24;
+    border-radius: 8px;
+    font: inherit;
+    background: #fff;
+  }
+  .mix-input-row .btn {
+    width: auto;
+    margin-top: 0;
+    padding: 10px 20px;
+    background: linear-gradient(110deg, var(--amber), #f59e0b);
+  }
+  .mix-input-row .btn:hover {
+    background: linear-gradient(110deg, var(--amber-dark), var(--amber));
+  }
+  .mix-result-stats {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .mix-result-stats strong { color: var(--amber-dark); }
 
   .status {
     font-size: 13px;
@@ -401,16 +613,49 @@
 
     <div class="options">
       <label><input type="checkbox" id="uniqueChk" checked> Remove duplicates</label>
-      <label><input type="checkbox" id="shuffleChk" checked> Shuffle randomly</label>
-      <div class="option-hint">Each user gets a different random order every time.</div>
       <label><input type="checkbox" id="sortChk"> Sort A → Z (overrides shuffle)</label>
     </div>
 
     <label>Filter by domain (optional)</label>
     <input type="text" id="filterInput" placeholder="e.g. gmail.com — leave empty for all">
 
-    <button class="btn" id="extractBtn">Extract Emails</button>
+    <div class="chunk-controls">
+      <h3>📦 Working Set</h3>
+      <p class="status" style="margin: 0; color: var(--green-dark);">
+        Choose how many emails to see at a time. Then navigate chunk by chunk — perfect for daily rounds.
+      </p>
+
+      <div class="chunk-row">
+        <span class="chunk-label">Per chunk:</span>
+        <button class="chip-btn chunk-size-btn" data-size="1000">1,000</button>
+        <button class="chip-btn chunk-size-btn active" data-size="3000">3,000</button>
+        <button class="chip-btn chunk-size-btn" data-size="5000">5,000</button>
+        <button class="chip-btn chunk-size-btn" data-size="custom">Custom</button>
+      </div>
+
+      <div class="chunk-row" id="chunkCustomRow" style="display: none;">
+        <span class="chunk-label"></span>
+        <input type="number" id="chunkCustomSize" placeholder="e.g. 2000" min="1">
+      </div>
+
+      <div class="chunk-row">
+        <span class="chunk-label">Order:</span>
+        <button class="chip-btn chunk-order-btn active" data-order="ordered">In Order</button>
+        <button class="chip-btn chunk-order-btn" data-order="shuffled">🔀 Shuffle</button>
+      </div>
+    </div>
+
+    <button class="btn" id="extractBtn" style="margin-top: 15px;">Extract Emails</button>
     <div class="status" id="extractStatus"></div>
+  </div>
+
+  <div class="chunk-nav" id="chunkNav">
+    <div class="chunk-nav-label">Working Set</div>
+    <div class="chunk-nav-info" id="chunkNavInfo"></div>
+    <div class="chunk-nav-buttons">
+      <button class="chunk-nav-btn" id="prevChunkBtn">← Previous</button>
+      <button class="chunk-nav-btn" id="nextChunkBtn">Next →</button>
+    </div>
   </div>
 
   <details id="resultDetails">
@@ -418,18 +663,16 @@
       <span>Results <span class="summary-count" id="resultCount">(0)</span></span>
     </summary>
     <div class="dropdown-body">
-
       <div class="btn-row">
-        <button class="btn secondary" id="reshuffleBtn">🔀 Reshuffle</button>
-        <button class="btn secondary" id="copyBtn">Copy All</button>
+        <button class="btn secondary" id="reshuffleBtn">🔀 Reshuffle Chunk</button>
+        <button class="btn secondary" id="copyBtn">Copy Chunk</button>
         <button class="btn secondary" id="downloadTxtBtn">Download .txt</button>
         <button class="btn secondary" id="downloadCsvBtn">Download .csv</button>
       </div>
 
-      <!-- Batch grouping -->
       <div class="batch-section">
         <h3>Batch Grouping</h3>
-        <p class="status" style="margin-bottom: 10px; margin-top: 0;">Split results into smaller groups for sending in rounds.</p>
+        <p class="status" style="margin-bottom: 10px; margin-top: 0;">Split current chunk into smaller groups for sending rounds.</p>
 
         <div class="batch-buttons">
           <button class="batch-btn" data-size="50">50</button>
@@ -447,10 +690,141 @@
         <div class="batch-list" id="batchList"></div>
       </div>
 
-      <!-- Full list -->
-      <h3 style="margin-top: 20px;">Full List</h3>
-      <div class="list" id="resultList"></div>
-      <p class="empty" id="resultEmpty">No emails extracted yet.</p>
+      <details class="nested" id="fullListDetails">
+        <summary>
+          <span>Full Chunk <span class="summary-count" id="fullListCount">(0)</span></span>
+        </summary>
+        <div class="dropdown-body">
+          <div class="list" id="resultList"></div>
+          <p class="empty" id="resultEmpty">No emails extracted yet.</p>
+        </div>
+      </details>
+    </div>
+  </details>
+
+  <details id="gmailDetails">
+    <summary>
+      <span>
+        <span class="cat-dot gmail"></span>
+        Gmail - Personal <span class="summary-count" id="gmailCount">(0)</span>
+      </span>
+    </summary>
+    <div class="dropdown-body">
+      <p class="status">All @gmail.com and @googlemail.com addresses in the current chunk.</p>
+      <div class="btn-row">
+        <button class="btn secondary" id="copyGmailBtn">Copy Gmail List</button>
+        <button class="btn secondary" id="downloadGmailBtn">Download .txt</button>
+      </div>
+      <div class="list" id="gmailList"></div>
+      <p class="empty" id="gmailEmpty">No Gmail addresses yet.</p>
+    </div>
+  </details>
+
+  <details id="otherDetails">
+    <summary>
+      <span>
+        <span class="cat-dot other"></span>
+        Other - Work <span class="summary-count" id="otherCount">(0)</span>
+      </span>
+    </summary>
+    <div class="dropdown-body">
+      <p class="status">Everything that isn't Gmail — work, business, custom domains.</p>
+      <div class="btn-row">
+        <button class="btn secondary" id="copyOtherBtn">Copy Other List</button>
+        <button class="btn secondary" id="downloadOtherBtn">Download .txt</button>
+      </div>
+      <div class="list" id="otherList"></div>
+      <p class="empty" id="otherEmpty">No other addresses yet.</p>
+    </div>
+  </details>
+
+  <!-- Mix Ratio -->
+  <details id="mixDetails">
+    <summary>
+      <span>🔀 Mix Ratio</span>
+    </summary>
+    <div class="dropdown-body">
+      <div class="mix-section">
+        <h3>Mix Gmail + Other in a Ratio</h3>
+        <p class="status" style="margin-bottom: 12px;">
+          Build a list with more Gmail than Work (or vice versa). Uses the current chunk.
+        </p>
+
+        <label style="color: var(--amber-dark); margin-top: 0;">Preset ratios (Gmail : Other)</label>
+        <div class="mix-presets">
+          <button class="mix-btn" data-g="1" data-o="1">1:1</button>
+          <button class="mix-btn" data-g="2" data-o="1">2:1</button>
+          <button class="mix-btn" data-g="3" data-o="1">3:1</button>
+          <button class="mix-btn" data-g="4" data-o="1">4:1</button>
+          <button class="mix-btn" data-g="5" data-o="1">5:1</button>
+          <button class="mix-btn" data-g="1" data-o="2">1:2</button>
+          <button class="mix-btn" data-g="1" data-o="3">1:3</button>
+        </div>
+
+        <label style="color: var(--amber-dark);">Or type your own — e.g. <code>200:50</code> or <code>3:1</code></label>
+        <div class="mix-input-row">
+          <input type="text" id="mixInput" placeholder="e.g. 2:1 or 200:50">
+          <button class="btn" id="applyMixBtn">Generate Mix</button>
+        </div>
+
+        <div class="mix-result-stats" id="mixStats" style="display: none;"></div>
+
+        <div class="btn-row" id="mixActionRow" style="display: none; margin-top: 10px;">
+          <button class="btn secondary" id="copyMixBtn" style="background: #fff; border-color: #fbbf24; color: var(--amber-dark);">Copy Mixed List</button>
+          <button class="btn secondary" id="downloadMixBtn" style="background: #fff; border-color: #fbbf24; color: var(--amber-dark);">Download .txt</button>
+        </div>
+
+        <!-- Mix Batch Grouping -->
+        <div class="batch-section amber" id="mixBatchSection" style="display: none;">
+          <h3>Batch Grouping for Mixed List</h3>
+          <p class="status" style="margin-bottom: 10px; margin-top: 0; color: var(--amber-dark);">Split the mixed list into smaller groups.</p>
+
+          <div class="batch-buttons">
+            <button class="batch-btn amber mix-batch-btn" data-size="50">50</button>
+            <button class="batch-btn amber mix-batch-btn" data-size="250">250</button>
+            <button class="batch-btn amber mix-batch-btn" data-size="500">500</button>
+            <button class="batch-btn amber mix-batch-btn" data-size="1000">1000</button>
+            <button class="batch-btn amber mix-batch-btn" data-size="custom">Custom</button>
+          </div>
+
+          <div class="batch-custom" id="mixBatchCustom">
+            <input type="number" id="mixCustomSize" placeholder="e.g. 100" min="1">
+            <button class="btn amber" id="applyMixCustomBtn">Apply</button>
+          </div>
+
+          <div class="batch-summary" id="mixBatchSummary"></div>
+          <div class="batch-list" id="mixBatchList"></div>
+        </div>
+
+        <!-- Leftover Section -->
+        <div class="batch-section grey" id="mixLeftoverSection" style="display: none;">
+          <h3>⚠ Leftover (Not in Mix)</h3>
+          <p class="status" style="margin-bottom: 10px; margin-top: 0; color: #4b5563;">
+            Emails that didn't fit into the ratio. Grouped by the same batch size as above.
+          </p>
+          <div class="batch-list" id="mixLeftoverList"></div>
+        </div>
+
+        <!-- Full Mixed List -->
+        <details class="nested amber" id="mixListDetails" style="display: none;">
+          <summary>
+            <span>Full Mixed List <span class="summary-count" id="mixListCount">(0)</span></span>
+          </summary>
+          <div class="dropdown-body">
+            <div class="list" id="mixList"></div>
+          </div>
+        </details>
+
+        <!-- Full Leftover List -->
+        <details class="nested grey" id="mixLeftoverDetails" style="display: none;">
+          <summary>
+            <span>Full Leftover List <span class="summary-count" id="mixLeftoverCount">(0)</span></span>
+          </summary>
+          <div class="dropdown-body">
+            <div class="list" id="mixLeftoverFullList"></div>
+          </div>
+        </details>
+      </div>
     </div>
   </details>
 
@@ -465,8 +839,19 @@
   const $ = id => document.getElementById(id);
 
   let selectedFiles = [];
+  let masterEmails = [];
+  let masterMode = 'ordered';
+  let chunkSize = 3000;
+  let chunkIndex = 0;
+
   let extractedEmails = [];
-  let currentBatchSize = 0; // 0 = no batching
+  let gmailEmails = [];
+  let otherEmails = [];
+  let mixedEmails = [];
+  let leftoverEmails = [];
+  let currentBatchSize = 0;
+  let currentMixBatchSize = 0;
+  let currentMixRatio = null;
 
   if (window.pdfjsLib) {
     pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -487,6 +872,21 @@
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
+  }
+
+  function isGmail(email) {
+    const lower = email.toLowerCase();
+    return lower.endsWith('@gmail.com') || lower.endsWith('@googlemail.com');
+  }
+
+  function splitEmails(emails) {
+    const gmail = [];
+    const other = [];
+    emails.forEach(e => {
+      if (isGmail(e)) gmail.push(e);
+      else other.push(e);
+    });
+    return { gmail, other };
   }
 
   function readAsText(file) {
@@ -573,6 +973,41 @@
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   }
 
+  // ---- Working Set controls ----
+  document.querySelectorAll('.chunk-size-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.chunk-size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (btn.dataset.size === 'custom') {
+        $('chunkCustomRow').style.display = 'flex';
+        return;
+      }
+      $('chunkCustomRow').style.display = 'none';
+      chunkSize = parseInt(btn.dataset.size);
+      chunkIndex = 0;
+      if (masterEmails.length > 0) loadChunk();
+    };
+  });
+
+  $('chunkCustomSize').addEventListener('change', () => {
+    const val = parseInt($('chunkCustomSize').value);
+    if (val > 0) {
+      chunkSize = val;
+      chunkIndex = 0;
+      if (masterEmails.length > 0) loadChunk();
+    }
+  });
+
+  document.querySelectorAll('.chunk-order-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.chunk-order-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      masterMode = btn.dataset.order;
+    };
+  });
+
+  // ---- Extract ----
   $('extractBtn').onclick = async () => {
     const status = $('extractStatus');
     status.className = 'status';
@@ -613,30 +1048,112 @@
 
       if ($('sortChk').checked) {
         emails.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-      } else if ($('shuffleChk').checked) {
-        emails = shuffleArray(emails);
+        masterEmails = emails;
+      } else if (masterMode === 'shuffled') {
+        masterEmails = shuffleArray(emails);
+      } else {
+        masterEmails = emails;
       }
 
-      extractedEmails = emails;
-      renderResults();
-      renderBatches();
+      chunkIndex = 0;
 
+      if (masterEmails.length === 0) {
+        extractedEmails = [];
+        gmailEmails = [];
+        otherEmails = [];
+        mixedEmails = [];
+        leftoverEmails = [];
+        currentMixRatio = null;
+        currentMixBatchSize = 0;
+        renderAll();
+        status.className = 'status error';
+        status.textContent = 'No valid emails found.';
+        return;
+      }
+
+      loadChunk();
+
+      const totalChunks = Math.ceil(masterEmails.length / chunkSize);
       status.className = 'status success';
-      status.textContent = `Extracted ${emails.length} email(s).`;
+      status.textContent = `Extracted ${masterEmails.length.toLocaleString()} email(s). Showing chunk 1 of ${totalChunks} (${extractedEmails.length.toLocaleString()} emails).`;
 
-      if (emails.length > 0) {
-        $('resultDetails').open = true;
-      }
+      $('resultDetails').open = true;
     } catch (err) {
       status.className = 'status error';
       status.textContent = 'Error: ' + err.message;
     }
   };
 
+  // ---- Chunk loading ----
+  function loadChunk() {
+    const start = chunkIndex * chunkSize;
+    const end = start + chunkSize;
+    extractedEmails = masterEmails.slice(start, end);
+
+    const split = splitEmails(extractedEmails);
+    gmailEmails = split.gmail;
+    otherEmails = split.other;
+
+    mixedEmails = [];
+    leftoverEmails = [];
+    currentMixRatio = null;
+    currentMixBatchSize = 0;
+
+    updateChunkNav();
+    renderAll();
+  }
+
+  function updateChunkNav() {
+    if (masterEmails.length === 0) {
+      $('chunkNav').classList.remove('show');
+      return;
+    }
+    $('chunkNav').classList.add('show');
+
+    const start = chunkIndex * chunkSize + 1;
+    const end = Math.min((chunkIndex + 1) * chunkSize, masterEmails.length);
+    const total = masterEmails.length;
+    const totalChunks = Math.ceil(total / chunkSize);
+
+    $('chunkNavInfo').innerHTML = `
+      Viewing #${start.toLocaleString()}–#${end.toLocaleString()}
+      <span>of ${total.toLocaleString()} · chunk ${chunkIndex + 1} of ${totalChunks}</span>
+    `;
+
+    $('prevChunkBtn').disabled = chunkIndex === 0;
+    $('nextChunkBtn').disabled = chunkIndex >= totalChunks - 1;
+  }
+
+  $('prevChunkBtn').onclick = () => {
+    if (chunkIndex > 0) {
+      chunkIndex--;
+      loadChunk();
+      $('chunkNav').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  $('nextChunkBtn').onclick = () => {
+    const totalChunks = Math.ceil(masterEmails.length / chunkSize);
+    if (chunkIndex < totalChunks - 1) {
+      chunkIndex++;
+      loadChunk();
+      $('chunkNav').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // ---- Render everything ----
+  function renderAll() {
+    renderResults();
+    renderBatches();
+    renderCategories();
+    renderMix();
+  }
+
   function renderResults() {
     const list = $('resultList');
     list.innerHTML = '';
     $('resultCount').textContent = `(${extractedEmails.length})`;
+    $('fullListCount').textContent = `(${extractedEmails.length})`;
 
     if (extractedEmails.length === 0) {
       $('resultEmpty').style.display = 'block';
@@ -645,84 +1162,136 @@
     $('resultEmpty').style.display = 'none';
 
     extractedEmails.forEach((email, i) => {
+      const isG = isGmail(email);
       const div = document.createElement('div');
       div.className = 'item';
       div.innerHTML = `
-        <span class="num">${i + 1}</span>
+        <span class="num ${isG ? 'gmail' : 'other'}">${i + 1}</span>
         <span class="email-text">${email}</span>
       `;
       list.appendChild(div);
     });
   }
 
-  // --- Batch grouping ---
-  function renderBatches() {
-    const summary = $('batchSummary');
-    const list = $('batchList');
-    list.innerHTML = '';
-
-    if (currentBatchSize <= 0 || extractedEmails.length === 0) {
-      summary.textContent = '';
-      return;
+  function renderCategories() {
+    $('gmailCount').textContent = `(${gmailEmails.length})`;
+    const gl = $('gmailList');
+    gl.innerHTML = '';
+    if (gmailEmails.length === 0) {
+      $('gmailEmpty').style.display = 'block';
+    } else {
+      $('gmailEmpty').style.display = 'none';
+      gmailEmails.forEach((email, i) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <span class="num gmail">${i + 1}</span>
+          <span class="email-text">${email}</span>
+        `;
+        gl.appendChild(div);
+      });
     }
 
-    const total = extractedEmails.length;
+    $('otherCount').textContent = `(${otherEmails.length})`;
+    const ol = $('otherList');
+    ol.innerHTML = '';
+    if (otherEmails.length === 0) {
+      $('otherEmpty').style.display = 'block';
+    } else {
+      $('otherEmpty').style.display = 'none';
+      otherEmails.forEach((email, i) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <span class="num other">${i + 1}</span>
+          <span class="email-text">${email}</span>
+        `;
+        ol.appendChild(div);
+      });
+    }
+  }
+
+  // ---- Batch rendering (reusable) ----
+  function buildBatchUI(emails, batchSize, container, summaryEl, variant) {
+    // variant: '' | 'amber' | 'grey'
+    container.innerHTML = '';
+    if (summaryEl) summaryEl.textContent = '';
+
+    if (batchSize <= 0 || emails.length === 0) return;
+
+    const total = emails.length;
     const batches = [];
-    for (let i = 0; i < total; i += currentBatchSize) {
-      batches.push(extractedEmails.slice(i, i + currentBatchSize));
+    for (let i = 0; i < total; i += batchSize) {
+      batches.push(emails.slice(i, i + batchSize));
     }
 
-    summary.textContent = `${batches.length} batch${batches.length !== 1 ? 'es' : ''} of ${currentBatchSize} · ${total} emails total`;
+    if (summaryEl) {
+      summaryEl.textContent = `${batches.length} batch${batches.length !== 1 ? 'es' : ''} of ${batchSize} · ${total} emails total`;
+    }
 
     batches.forEach((batch, idx) => {
-      const start = idx * currentBatchSize + 1;
+      const start = idx * batchSize + 1;
       const end = start + batch.length - 1;
       const div = document.createElement('div');
-      div.className = 'batch-group';
+      div.className = 'batch-group' + (variant ? ' ' + variant : '');
       div.innerHTML = `
         <div class="batch-group-head">
           <span class="batch-group-title">
             Batch ${idx + 1} <span>(#${start} – #${end} · ${batch.length} emails)</span>
           </span>
           <div class="batch-group-actions">
-            <button class="btn-mini" data-copy-batch="${idx}">Copy</button>
-            <button class="btn-mini" data-download-batch="${idx}">Download</button>
+            <button class="btn-mini ${variant}" data-copy-batch="${idx}">Copy</button>
+            <button class="btn-mini ${variant}" data-download-batch="${idx}">Download</button>
           </div>
         </div>
+        <textarea class="batch-preview" readonly data-batch-textarea="${idx}"></textarea>
+        <div class="batch-preview-hint">↘ Drag the bottom-right corner to expand</div>
       `;
-      list.appendChild(div);
+      container.appendChild(div);
     });
 
-    // Attach handlers
-    list.querySelectorAll('[data-copy-batch]').forEach(btn => {
+    container.querySelectorAll('[data-batch-textarea]').forEach(ta => {
+      const idx = parseInt(ta.dataset.batchTextarea);
+      ta.value = batches[idx].join('\n');
+    });
+
+    container.querySelectorAll('[data-copy-batch]').forEach(btn => {
       btn.onclick = async () => {
         const idx = parseInt(btn.dataset.copyBatch);
-        const batch = batches[idx];
         try {
-          await navigator.clipboard.writeText(batch.join('\n'));
+          await navigator.clipboard.writeText(batches[idx].join('\n'));
           const old = btn.textContent;
           btn.textContent = '✓';
           setTimeout(() => btn.textContent = old, 1200);
-        } catch (e) {
-          alert('Copy failed.');
-        }
+        } catch (e) { alert('Copy failed.'); }
       };
     });
 
-    list.querySelectorAll('[data-download-batch]').forEach(btn => {
+    container.querySelectorAll('[data-download-batch]').forEach(btn => {
       btn.onclick = () => {
         const idx = parseInt(btn.dataset.downloadBatch);
-        const batch = batches[idx];
-        downloadFile(batch.join('\n'), `batch-${idx + 1}.txt`, 'text/plain');
+        downloadFile(batches[idx].join('\n'), `batch-${idx + 1}.txt`, 'text/plain');
       };
     });
   }
 
-  // Batch size buttons
-  document.querySelectorAll('.batch-btn').forEach(btn => {
+  function renderBatches() {
+    buildBatchUI(extractedEmails, currentBatchSize, $('batchList'), $('batchSummary'), '');
+  }
+
+  function renderMixBatches() {
+    buildBatchUI(mixedEmails.map(m => m.email), currentMixBatchSize, $('mixBatchList'), $('mixBatchSummary'), 'amber');
+  }
+
+  function renderLeftoverBatches() {
+    buildBatchUI(leftoverEmails.map(m => m.email), currentMixBatchSize, $('mixLeftoverList'), null, 'grey');
+  }
+
+  // ---- Main batch size controls ----
+  document.querySelectorAll('.batch-btn:not(.mix-batch-btn)').forEach(btn => {
     btn.onclick = () => {
       const size = btn.dataset.size;
-      document.querySelectorAll('.batch-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.batch-btn:not(.mix-batch-btn)').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
       if (size === 'custom') {
@@ -745,12 +1314,253 @@
     renderBatches();
   };
 
-  // --- Reshuffle ---
+  // ---- Mix batch size controls ----
+  document.querySelectorAll('.mix-batch-btn').forEach(btn => {
+    btn.onclick = () => {
+      const size = btn.dataset.size;
+      document.querySelectorAll('.mix-batch-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (size === 'custom') {
+        $('mixBatchCustom').classList.add('show');
+        return;
+      }
+      $('mixBatchCustom').classList.remove('show');
+      currentMixBatchSize = parseInt(size);
+      renderMixBatches();
+      renderLeftoverBatches();
+    };
+  });
+
+  $('applyMixCustomBtn').onclick = () => {
+    const val = parseInt($('mixCustomSize').value);
+    if (!val || val < 1) {
+      alert('Please enter a valid number.');
+      return;
+    }
+    currentMixBatchSize = val;
+    renderMixBatches();
+    renderLeftoverBatches();
+  };
+
+  // ---- Mix Ratio ----
+  function parseRatio(str) {
+    const m = str.trim().match(/^(\d+)\s*[:/]\s*(\d+)$/);
+    if (!m) return null;
+    const g = parseInt(m[1]);
+    const o = parseInt(m[2]);
+    if (g <= 0 || o <= 0) return null;
+    return { g, o };
+  }
+
+  function buildMix(gmailArr, otherArr, ratio) {
+    const g = shuffleArray(gmailArr);
+    const o = shuffleArray(otherArr);
+    const maxGmailRounds = Math.floor(g.length / ratio.g);
+    const maxOtherRounds = Math.floor(o.length / ratio.o);
+    const rounds = Math.min(maxGmailRounds, maxOtherRounds);
+
+    const mixed = [];
+    let gi = 0, oi = 0;
+
+    for (let r = 0; r < rounds; r++) {
+      for (let k = 0; k < ratio.g; k++) {
+        mixed.push({ email: g[gi++], type: 'gmail' });
+      }
+      for (let k = 0; k < ratio.o; k++) {
+        mixed.push({ email: o[oi++], type: 'other' });
+      }
+    }
+
+    // Leftover emails
+    const leftoverGmail = g.slice(gi).map(e => ({ email: e, type: 'gmail' }));
+    const leftoverOther = o.slice(oi).map(e => ({ email: e, type: 'other' }));
+    const leftover = leftoverGmail.concat(leftoverOther);
+
+    return {
+      mixed,
+      leftover,
+      usedGmail: gi,
+      usedOther: oi,
+      unusedGmail: g.length - gi,
+      unusedOther: o.length - oi,
+      rounds
+    };
+  }
+
+  function renderMix() {
+    const statsBox = $('mixStats');
+    const actionRow = $('mixActionRow');
+    const list = $('mixList');
+    const batchSection = $('mixBatchSection');
+    const leftoverSection = $('mixLeftoverSection');
+    const listDetails = $('mixListDetails');
+    const leftoverDetails = $('mixLeftoverDetails');
+    const leftoverFullList = $('mixLeftoverFullList');
+
+    list.innerHTML = '';
+    leftoverFullList.innerHTML = '';
+
+    if (!currentMixRatio || mixedEmails.length === 0) {
+      statsBox.style.display = 'none';
+      actionRow.style.display = 'none';
+      batchSection.style.display = 'none';
+      leftoverSection.style.display = 'none';
+      listDetails.style.display = 'none';
+      leftoverDetails.style.display = 'none';
+      return;
+    }
+
+    statsBox.style.display = 'block';
+    actionRow.style.display = 'flex';
+    batchSection.style.display = 'block';
+    listDetails.style.display = 'block';
+
+    const r = currentMixRatio;
+    const info = r.info;
+    statsBox.innerHTML = `
+      <strong>Ratio ${r.g}:${r.o}</strong> — ${mixedEmails.length} total emails<br>
+      ✓ Used: <strong>${info.usedGmail}</strong> Gmail + <strong>${info.usedOther}</strong> Other<br>
+      ⏳ Leftover: ${info.unusedGmail} Gmail, ${info.unusedOther} Other
+    `;
+
+    // Full mixed list inside dropdown
+    $('mixListCount').textContent = `(${mixedEmails.length})`;
+    mixedEmails.forEach((item, i) => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <span class="num ${item.type}">${i + 1}</span>
+        <span class="email-text">${item.email}</span>
+      `;
+      list.appendChild(div);
+    });
+
+    // Mixed batches
+    renderMixBatches();
+
+    // Leftover section
+    if (leftoverEmails.length > 0) {
+      leftoverSection.style.display = 'block';
+      leftoverDetails.style.display = 'block';
+      $('mixLeftoverCount').textContent = `(${leftoverEmails.length})`;
+
+      leftoverEmails.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <span class="num ${item.type}">${i + 1}</span>
+          <span class="email-text">${item.email}</span>
+        `;
+        leftoverFullList.appendChild(div);
+      });
+
+      // Batches for leftover (same batch size as mix)
+      renderLeftoverBatches();
+    } else {
+      leftoverSection.style.display = 'none';
+      leftoverDetails.style.display = 'none';
+    }
+  }
+
+  function applyRatio(g, o) {
+    if (gmailEmails.length === 0 || otherEmails.length === 0) {
+      alert('You need at least one Gmail and one Other email to mix.');
+      return;
+    }
+    const result = buildMix(gmailEmails, otherEmails, { g, o });
+    if (result.mixed.length === 0) {
+      alert(`Can't make any complete ${g}:${o} rounds with your current chunk.`);
+      return;
+    }
+    mixedEmails = result.mixed;
+    leftoverEmails = result.leftover;
+    currentMixRatio = { g, o, info: result };
+    renderMix();
+  }
+
+  document.querySelectorAll('.mix-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.mix-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const g = parseInt(btn.dataset.g);
+      const o = parseInt(btn.dataset.o);
+      $('mixInput').value = `${g}:${o}`;
+      applyRatio(g, o);
+    };
+  });
+
+  $('applyMixBtn').onclick = () => {
+    const parsed = parseRatio($('mixInput').value);
+    if (!parsed) {
+      alert('Invalid format. Use something like 2:1 or 200:50.');
+      return;
+    }
+    document.querySelectorAll('.mix-btn').forEach(b => b.classList.remove('active'));
+    applyRatio(parsed.g, parsed.o);
+  };
+
+  $('copyMixBtn').onclick = async () => {
+    if (mixedEmails.length === 0) return;
+    try {
+      await navigator.clipboard.writeText(mixedEmails.map(m => m.email).join('\n'));
+      const btn = $('copyMixBtn');
+      const old = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => btn.textContent = old, 1500);
+    } catch (e) { alert('Copy failed.'); }
+  };
+
+  $('downloadMixBtn').onclick = () => {
+    if (mixedEmails.length === 0) return;
+    downloadFile(mixedEmails.map(m => m.email).join('\n'), 'mixed.txt', 'text/plain');
+  };
+
+  // ---- Category copy/download ----
+  $('copyGmailBtn').onclick = async () => {
+    if (gmailEmails.length === 0) return;
+    try {
+      await navigator.clipboard.writeText(gmailEmails.join('\n'));
+      const btn = $('copyGmailBtn');
+      const old = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => btn.textContent = old, 1500);
+    } catch (e) { alert('Copy failed.'); }
+  };
+
+  $('downloadGmailBtn').onclick = () => {
+    if (gmailEmails.length === 0) return;
+    downloadFile(gmailEmails.join('\n'), 'gmail-personal.txt', 'text/plain');
+  };
+
+  $('copyOtherBtn').onclick = async () => {
+    if (otherEmails.length === 0) return;
+    try {
+      await navigator.clipboard.writeText(otherEmails.join('\n'));
+      const btn = $('copyOtherBtn');
+      const old = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => btn.textContent = old, 1500);
+    } catch (e) { alert('Copy failed.'); }
+  };
+
+  $('downloadOtherBtn').onclick = () => {
+    if (otherEmails.length === 0) return;
+    downloadFile(otherEmails.join('\n'), 'other-work.txt', 'text/plain');
+  };
+
+  // ---- Reshuffle ----
   $('reshuffleBtn').onclick = () => {
     if (extractedEmails.length === 0) return;
     extractedEmails = shuffleArray(extractedEmails);
-    renderResults();
-    renderBatches();
+    const split = splitEmails(extractedEmails);
+    gmailEmails = split.gmail;
+    otherEmails = split.other;
+    mixedEmails = [];
+    leftoverEmails = [];
+    currentMixRatio = null;
+    currentMixBatchSize = 0;
+    renderAll();
   };
 
   $('copyBtn').onclick = async () => {
@@ -789,28 +1599,48 @@
     URL.revokeObjectURL(url);
   }
 
+  // ---- Clear ----
   $('clearBtn').onclick = () => {
     if (!confirm("Clear all files, text, and results?")) return;
     selectedFiles = [];
+    masterEmails = [];
     extractedEmails = [];
+    gmailEmails = [];
+    otherEmails = [];
+    mixedEmails = [];
+    leftoverEmails = [];
     currentBatchSize = 0;
+    currentMixBatchSize = 0;
+    currentMixRatio = null;
+    chunkIndex = 0;
     $('textInput').value = '';
     $('filterInput').value = '';
     $('fileInput').value = '';
     $('customSize').value = '';
+    $('mixCustomSize').value = '';
+    $('chunkCustomSize').value = '';
+    $('mixInput').value = '';
     $('extractStatus').textContent = '';
     $('extractStatus').className = 'status';
     document.querySelectorAll('.batch-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.mix-btn').forEach(b => b.classList.remove('active'));
     $('batchCustom').classList.remove('show');
+    $('mixBatchCustom').classList.remove('show');
+    $('chunkCustomRow').style.display = 'none';
     renderFileList();
-    renderResults();
-    renderBatches();
+    renderAll();
+    updateChunkNav();
     $('resultDetails').open = false;
+    $('fullListDetails').open = false;
+    $('gmailDetails').open = false;
+    $('otherDetails').open = false;
+    $('mixDetails').open = false;
+    $('mixListDetails').open = false;
+    $('mixLeftoverDetails').open = false;
   };
 
   renderFileList();
-  renderResults();
-  renderBatches();
+  renderAll();
 </script>
 </body>
 </html>
