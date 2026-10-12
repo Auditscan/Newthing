@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SwiftSend</title>
+<title>SwiftPro</title>
 <style>
   :root {
     --green-dark: #166534;
@@ -589,7 +589,6 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  /* Floating scroll buttons */
   .scroll-nav {
     position: fixed;
     right: 15px;
@@ -655,7 +654,7 @@
 <header>
   <div class="brand">
     <div class="logo"></div>
-    <h1>SwiftSend</h1>
+    <h1>SwiftPro</h1>
   </div>
   <nav class="tabs">
     <button class="tab-btn active" data-tab="extract" id="tabBtnExtract">Extract</button>
@@ -1088,12 +1087,12 @@
   /* ============================================
      MODE
      ============================================ */
-  let currentMode = store.getRaw('swiftsend_extractMode', 'simple');
+  let currentMode = store.getRaw('swiftpro_extractMode', 'simple');
   if (currentMode !== 'simple' && currentMode !== 'advanced') currentMode = 'simple';
 
   function setMode(mode) {
     currentMode = mode;
-    store.setRaw('swiftsend_extractMode', mode);
+    store.setRaw('swiftpro_extractMode', mode);
 
     const tab = $('tab-extract');
     tab.classList.toggle('mode-simple', mode === 'simple');
@@ -1130,7 +1129,7 @@
     document.querySelectorAll('.tab-panel').forEach(p => {
       p.classList.toggle('active', p.id === 'tab-' + name);
     });
-    store.setRaw('swiftsend_activeTab', name);
+    store.setRaw('swiftpro_activeTab', name);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (name === 'send') sRender();
   }
@@ -1139,7 +1138,7 @@
     btn.onclick = () => switchTab(btn.dataset.tab);
   });
 
-  const lastTab = store.getRaw('swiftsend_activeTab', 'extract');
+  const lastTab = store.getRaw('swiftpro_activeTab', 'extract');
   if (lastTab === 'send' || lastTab === 'extract') switchTab(lastTab);
 
   /* ============================================
@@ -1180,7 +1179,7 @@
   /* ============================================
      PUSHED BATCH TRACKING
      ============================================ */
-  let xPushedEmails = new Set(store.get('swiftsend_pushedEmails', []));
+  let xPushedEmails = new Set(store.get('swiftpro_pushedEmails', []));
 
   function isBatchPushed(batch) {
     return batch.every(email => xPushedEmails.has(email.toLowerCase()));
@@ -1188,12 +1187,12 @@
 
   function markBatchPushed(batch) {
     batch.forEach(email => xPushedEmails.add(email.toLowerCase()));
-    store.set('swiftsend_pushedEmails', Array.from(xPushedEmails));
+    store.set('swiftpro_pushedEmails', Array.from(xPushedEmails));
   }
 
   function unmarkBatchPushed(batch) {
     batch.forEach(email => xPushedEmails.delete(email.toLowerCase()));
-    store.set('swiftsend_pushedEmails', Array.from(xPushedEmails));
+    store.set('swiftpro_pushedEmails', Array.from(xPushedEmails));
   }
 
   /* ============================================
@@ -1895,7 +1894,7 @@
     xCurrentMixRatio = null;
     xChunkIndex = 0;
     xPushedEmails = new Set();
-    store.remove('swiftsend_pushedEmails');
+    store.remove('swiftpro_pushedEmails');
     $('xTextInput').value = '';
     $('xFilterInput').value = '';
     $('xFileInput').value = '';
@@ -1925,27 +1924,27 @@
   /* ============================================
      SEND TAB
      ============================================ */
-  let sRecipients = store.get('swiftsend_recipients', []);
-  let sSentLog = store.get('swiftsend_sentLog', []);
+  let sRecipients = store.get('swiftpro_recipients', []);
+  let sSentLog = store.get('swiftpro_sentLog', []);
 
-  $('sSubject').value = store.getRaw('swiftsend_subject', '');
-  $('sBody').value = store.getRaw('swiftsend_body', '');
-  $('sBulkEmails').value = store.getRaw('swiftsend_bulkText', '');
+  $('sSubject').value = store.getRaw('swiftpro_subject', '');
+  $('sBody').value = store.getRaw('swiftpro_body', '');
+  $('sBulkEmails').value = store.getRaw('swiftpro_bulkText', '');
 
   $('sSubject').addEventListener('input', () => {
-    store.setRaw('swiftsend_subject', $('sSubject').value);
+    store.setRaw('swiftpro_subject', $('sSubject').value);
   });
   $('sBody').addEventListener('input', () => {
-    store.setRaw('swiftsend_body', $('sBody').value);
+    store.setRaw('swiftpro_body', $('sBody').value);
   });
   $('sBulkEmails').addEventListener('input', () => {
-    store.setRaw('swiftsend_bulkText', $('sBulkEmails').value);
+    store.setRaw('swiftpro_bulkText', $('sBulkEmails').value);
   });
 
   function sPruneSentLog() {
     const cutoff = Date.now() - (24 * 60 * 60 * 1000);
     sSentLog = sSentLog.filter(ts => ts > cutoff);
-    store.set('swiftsend_sentLog', sSentLog);
+    store.set('swiftpro_sentLog', sSentLog);
   }
 
   $('sAddBtn').onclick = () => {
@@ -1967,7 +1966,7 @@
     });
 
     $('sAddStatus').textContent = `Added ${addedCount} new email(s).`;
-    store.set('swiftsend_recipients', sRecipients);
+    store.set('swiftpro_recipients', sRecipients);
     sRender();
   };
 
@@ -2048,8 +2047,8 @@
     if (!item.sent) {
       item.sent = true;
       sSentLog.push(Date.now());
-      store.set('swiftsend_sentLog', sSentLog);
-      store.set('swiftsend_recipients', sRecipients);
+      store.set('swiftpro_sentLog', sSentLog);
+      store.set('swiftpro_recipients', sRecipients);
       sRender();
     }
   };
@@ -2078,11 +2077,11 @@
     if (!confirm("Are you sure? This will delete all emails and reset the analytics. Cannot be undone.")) return;
     sRecipients = [];
     sSentLog = [];
-    store.remove('swiftsend_recipients');
-    store.remove('swiftsend_sentLog');
-    store.remove('swiftsend_subject');
-    store.remove('swiftsend_body');
-    store.remove('swiftsend_bulkText');
+    store.remove('swiftpro_recipients');
+    store.remove('swiftpro_sentLog');
+    store.remove('swiftpro_subject');
+    store.remove('swiftpro_body');
+    store.remove('swiftpro_bulkText');
     $('sSubject').value = '';
     $('sBody').value = '';
     $('sBulkEmails').value = '';
@@ -2103,7 +2102,7 @@
 
     const newText = emails.join('\n');
     $('sBulkEmails').value = newText;
-    store.setRaw('swiftsend_bulkText', newText);
+    store.setRaw('swiftpro_bulkText', newText);
 
     markBatchPushed(emails);
 
